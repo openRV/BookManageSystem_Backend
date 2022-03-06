@@ -42,7 +42,6 @@ func GetToken(ctx *gin.Context) string {
 
 func parseToken(tokenString string) (*jwt.Token, *Claim, error) {
 	Claim := &Claim{}
-	fmt.Println(tokenString)
 	token, err := jwt.ParseWithClaims(tokenString, Claim, func(tokenString *jwt.Token) (i interface{}, err error) {
 		return secret, nil
 	})
@@ -59,6 +58,7 @@ func VertifyToken(ctx *gin.Context) (*Claim, error) {
 		return nil, errors.New("Invalid Token")
 }
 
+fmt.Println("Parsed token: name:",claim.Name," password:",claim.Password)
 return claim, nil
 
 }

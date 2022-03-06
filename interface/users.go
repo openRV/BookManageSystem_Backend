@@ -20,7 +20,7 @@ type UserData struct {
 
 type UsersRet struct {
 	Success bool `json:"success"`
-	Data    []UserData
+	Data    []UserData `json:"data"`
 }
 
 func filter(userdata UserData , filterdata UserData) bool{
