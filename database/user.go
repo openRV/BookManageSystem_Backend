@@ -3,7 +3,6 @@ package Database
 import (
 	"database/sql"
 	"fmt"
-
 	_ "github.com/lib/pq"
 )
 
@@ -65,4 +64,52 @@ func RegisterUser(user User) error {
 	fmt.Println("Insert success!")
 
 	return nil
+}
+
+func GetUserProperty(user User) (int,error) {
+	fmt.Println("Searching property: username:", user.Username, " password:", user.Password)
+	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
+	if err != nil {
+		fmt.Println(err)
+		return -1,err
+	}
+	defer db.Close()
+	var result = &User{}
+	err = db.QueryRow("SELECT * FROM \"Users\" WHERE username = $1 AND password = $2", user.Username, user.Password).Scan(&result.Username, &result.Password, &result.Property, &result.Address, &result.Phone)
+	if err != nil {
+		fmt.Println(err)
+		return -1, err
+	}
+
+	return result.Property, nil
+}
+
+func GetAllUsers() ([][5]string,error) {
+	fmt.Println("getting all users")
+	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer db.Close()
+
+	rows,err := db.Query("SELECT * FROM \"Users\"")
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var result [][5]string
+
+	for rows.Next() {
+		var str1,str2,str3,str4,str5 string
+ 		err = rows.Scan(&str1,&str2,&str3,&str4,&str5) 
+		if err != nil {
+			return result,err
+		}
+			result = append(result,[5]string{str1,str2,str3,str4,str5})
+	}
+
+	return result, nil
 }

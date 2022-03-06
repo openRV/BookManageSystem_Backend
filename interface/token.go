@@ -22,8 +22,8 @@ type Claim struct {
 func GetToken(ctx *gin.Context) string {
 	expireTime := time.Now().Add(effectTime)
 	claims := &Claim{
-		Name:     ctx.Query("userName"),
-		Password: ctx.Query("password"),
+		Name:     ctx.PostForm("userName"),
+		Password: ctx.PostForm("password"),
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			IssuedAt:  time.Now().Unix(),
@@ -42,7 +42,8 @@ func GetToken(ctx *gin.Context) string {
 
 func parseToken(tokenString string) (*jwt.Token, *Claim, error) {
 	Claim := &Claim{}
-	token, err := jwt.ParseWithClaims(tokenString, Claim, func(token *jwt.Token) (i interface{}, err error) {
+	fmt.Println(tokenString)
+	token, err := jwt.ParseWithClaims(tokenString, Claim, func(tokenString *jwt.Token) (i interface{}, err error) {
 		return secret, nil
 	})
 	return token, Claim, err
@@ -56,8 +57,8 @@ func VertifyToken(ctx *gin.Context) (*Claim, error) {
 	token, claim, err := parseToken(tokenString)
 	if err != nil || !token.Valid {
 		return nil, errors.New("Invalid Token")
-	}
+}
 
-	return claim, nil
+return claim, nil
 
 }
