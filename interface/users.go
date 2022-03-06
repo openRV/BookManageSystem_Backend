@@ -1,10 +1,11 @@
 package Interface
 
 import (
-	"net/http"
-	"strconv"
-	"fmt"
 	"bookms/Database"
+	"strconv"
+	"strings"
+
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,16 +23,35 @@ type UsersRet struct {
 	Data    []UserData
 }
 
+func filter(userdata UserData , filterdata UserData) bool{
+	if filterdata.UserName != "" {
+		if strings.Contains(filterdata.UserName,userdata.UserName) || strings.Contains(userdata.UserName,filterdata.UserName) {
+			return true
+		}
+	}
+	if filterdata.UserAddress != "" {
+		if strings.Contains(filterdata.UserAddress,userdata.UserAddress) || strings.Contains(userdata.UserAddress,filterdata.UserAddress) {
+			return true
+		}
+	}
+	if filterdata.UserPhone != "" {
+		if strings.Contains(filterdata.UserPhone,userdata.UserPhone) || strings.Contains(userdata.UserPhone,filterdata.UserPhone) {
+			return true
+		}
+	}
+	if filterdata.UserName == "" && filterdata.UserAddress == "" && filterdata.UserPhone == ""{
+		return true
+	}
+	return false
+}
+
 func GetUsers(c *gin.Context) {
 
 	curPage,_ := strconv.Atoi(c.Query("curPage"))
 	userName := c.Query("userName")
-	userAddress := c.QUery("userAddress")
+	userAddress := c.Query("userAddress")
 	userPhone := c.Query("userPhone")
-
-	// TODO filter result using following values
-
-	fmt.Println(curPage)
+	filterData := UserData{UserName: userName, UserAddress: userAddress, UserPhone: userPhone}
 
 	claim, err := VertifyToken(c)
 	if err != nil {
@@ -59,13 +79,22 @@ func GetUsers(c *gin.Context) {
 		}
 
 		data := []UserData{}
-
 		for _, value := range rows {
 			if value[2] == strconv.Itoa(Database.Student) {
-				data = append(data, UserData{UserName: value[0], Password: value[1], UserAddress: value[3], UserPhone: value[4]})
+				userData := UserData{UserName: value[0], Password: value[1], UserAddress: value[3], UserPhone: value[4]}
+				if filter(userData,filterData) {
+					data = append(data, userData)
+				}
 			}
 		}
-		c.IndentedJSON(http.StatusOK, UsersRet{Success: true, Data: data})
+
+		result := []UserData{}
+		if curPage*20 > len(data){
+			result = data[(curPage-1)*20:len(data)]
+		} else{
+			result = data[(curPage-1)*20:curPage*20]
+		}
+		c.IndentedJSON(http.StatusOK, UsersRet{Success: true, Data: result})
 		return
 	} else if property == Database.Faculty {
 		rows, err := Database.GetAllUsers()
@@ -73,12 +102,22 @@ func GetUsers(c *gin.Context) {
 			c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
 			return
 		}
-		data := []UserData{}
+			data := []UserData{}
 
-		for _, value := range rows {
-				data = append(data, UserData{UserName: value[0], Password: value[1], UserAddress: value[3], UserPhone: value[4]})
+			for _, value := range rows {
+
+				userData := UserData{UserName: value[0], Password: value[1], UserAddress: value[3], UserPhone: value[4]}
+				if filter(userData,filterData) {
+					data = append(data, userData)
+				}
 		}
-		c.IndentedJSON(http.StatusOK, UsersRet{Success: true, Data: data})
+		result := []UserData{}
+		if curPage*20 > len(data){
+			result = data[(curPage-1)*20:len(data)]
+		} else{
+			result = data[(curPage-1)*20:curPage*20]
+		}
+		c.IndentedJSON(http.StatusOK, UsersRet{Success: true, Data: result})
 		return
 	} else {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: "error: no Property found"})
