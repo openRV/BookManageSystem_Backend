@@ -8,6 +8,6 @@ import (
 
 func main() {
 	router := gin.Default()
-	router.POST("/user", Interface.PostUser)
+	router.POST("/login", Interface.PostUser)
 	router.Run("localhost:8080")
 }

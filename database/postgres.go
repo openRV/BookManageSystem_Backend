@@ -1,4 +1,4 @@
-package Databse
+package Database
 
 const (
 	DBTYPE   string = "postgres"
