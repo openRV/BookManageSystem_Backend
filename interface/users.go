@@ -145,8 +145,8 @@ func DeleteUser(c *gin.Context) {
 	authName := claim.Name
 	authPass := claim.Password
 
-	username := c.PostForm("userName")
-	password := c.PostForm("password")
+	username := c.Param("userName")
+	password := c.Param("password")
 
 	property, err := Database.GetUserProperty(Database.User{Username: authName, Password: authPass})
 	if err != nil {

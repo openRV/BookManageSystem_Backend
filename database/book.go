@@ -85,3 +85,57 @@ func GetAllCopy(book Book) ([][4]string, error) {
 
 	return result, nil
 }
+
+func DelBook(book Book) error {
+	fmt.Println("deleting all Books and Copies with id:", book.ID)
+	err := DelCopy(book)
+	if err != nil {
+		return err
+	}
+
+	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer db.Close()
+
+	stmt, err := db.Prepare("DELETE FROM Book WHERE bookid=$1")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(book.ID)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	fmt.Println("Delete Book success")
+	return nil
+}
+
+func DelCopy(book Book) error {
+	fmt.Println("deleting all Copies with id:", book.ID)
+
+	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer db.Close()
+
+	stmt, err := db.Prepare("DELETE FROM BookCopy WHERE bookid=$1")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(book.ID)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	fmt.Println("Delete Copy success")
+	return nil
+}

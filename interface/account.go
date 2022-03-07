@@ -1,9 +1,9 @@
 package Interface
 
 import (
-	"net/http"
-	"bookms/Database"	
+	"bookms/Database"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type accountData struct {
@@ -20,16 +20,16 @@ type AccountRet struct {
 
 func GetAccount(c *gin.Context) {
 
-claim, err := VertifyToken(c)
+	claim, err := VertifyToken(c)
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
 		return
 	}
 
-username := claim.Name
+	username := claim.Name
 	password := claim.Password
 
-User, err := Database.SearchUser(Database.User{Username: username, Password: password})
+	User, err := Database.SearchUser(Database.User{Username: username, Password: password})
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
 		return
@@ -38,8 +38,6 @@ User, err := Database.SearchUser(Database.User{Username: username, Password: pas
 	c.IndentedJSON(http.StatusOK, AccountRet{Success: true, Data: data})
 }
 
-
-
 func ModifyAccount(c *gin.Context) {
 	claim, err := VertifyToken(c)
 	if err != nil {
@@ -47,7 +45,7 @@ func ModifyAccount(c *gin.Context) {
 		return
 	}
 
-userName := c.PostForm("userName")
+	userName := c.PostForm("userName")
 	userAddress := c.PostForm("userAddress")
 	userPhone := c.PostForm("userPhone")
 	changePassword := c.PostForm("changePassword")
@@ -57,7 +55,7 @@ userName := c.PostForm("userName")
 	username := claim.Name
 	password := claim.Password
 
-	if changePassword == "true" && oldPassword != password{
+	if changePassword == "true" && oldPassword != password {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: "old password dismatch"})
 		return
 	}
@@ -65,21 +63,18 @@ userName := c.PostForm("userName")
 
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
-	return
+		return
 	}
 
-		finalPassword := password
+	finalPassword := password
 	if changePassword == "true" {
-	finalPassword = newPassword
+		finalPassword = newPassword
 	}
- 
-		err = Database.RegisterUser(Database.User{Username: userName, Address: userAddress, Phone: userPhone, Password: finalPassword, Property: Database.Student})
+
+	err = Database.RegisterUser(Database.User{Username: userName, Address: userAddress, Phone: userPhone, Password: finalPassword, Property: Database.Student})
 	if err != nil {
-	c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
-	return
-}   
-		c.IndentedJSON(http.StatusOK, AccountRet{Success: true, Data: accountData{UserName: userName, UserAddress: userAddress, UserPhone: userPhone, Password: finalPassword}})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		return
 	}
-
-
-	
+	c.IndentedJSON(http.StatusOK, AccountRet{Success: true, Data: accountData{UserName: userName, UserAddress: userAddress, UserPhone: userPhone, Password: finalPassword}})
+}
