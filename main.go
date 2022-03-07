@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-
 	"bookms/Interface"
+	"fmt"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -14,5 +14,11 @@ func main() {
 	router.GET("/admin/users", Interface.GetUsers)
 	router.GET("/users/account", Interface.GetAccount)
 	router.POST("/users/modify", Interface.ModifyAccount)
-	router.Run("localhost:8080")
+	router.POST("/admin/delusers", Interface.DeleteUser)
+	router.POST("/faculty/delusers", Interface.DeleteUser)
+	err := router.Run("localhost:8080")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 }

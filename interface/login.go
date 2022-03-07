@@ -19,7 +19,6 @@ func PostUser(c *gin.Context) {
 	password := c.PostForm("password")
 
 	token := GetToken(c)
-
 	_, err := Database.SearchUser(Database.User{Username: username, Password: password})
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})

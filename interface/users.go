@@ -19,27 +19,31 @@ type UserData struct {
 }
 
 type UsersRet struct {
-	Success bool `json:"success"`
+	Success bool       `json:"success"`
 	Data    []UserData `json:"data"`
 }
 
-func filter(userdata UserData , filterdata UserData) bool{
+type DelRet struct {
+	Success bool `json:"success"`
+}
+
+func filter(userdata UserData, filterdata UserData) bool {
 	if filterdata.UserName != "" {
-		if strings.Contains(filterdata.UserName,userdata.UserName) || strings.Contains(userdata.UserName,filterdata.UserName) {
+		if strings.Contains(filterdata.UserName, userdata.UserName) || strings.Contains(userdata.UserName, filterdata.UserName) {
 			return true
 		}
 	}
 	if filterdata.UserAddress != "" {
-		if strings.Contains(filterdata.UserAddress,userdata.UserAddress) || strings.Contains(userdata.UserAddress,filterdata.UserAddress) {
+		if strings.Contains(filterdata.UserAddress, userdata.UserAddress) || strings.Contains(userdata.UserAddress, filterdata.UserAddress) {
 			return true
 		}
 	}
 	if filterdata.UserPhone != "" {
-		if strings.Contains(filterdata.UserPhone,userdata.UserPhone) || strings.Contains(userdata.UserPhone,filterdata.UserPhone) {
+		if strings.Contains(filterdata.UserPhone, userdata.UserPhone) || strings.Contains(userdata.UserPhone, filterdata.UserPhone) {
 			return true
 		}
 	}
-	if filterdata.UserName == "" && filterdata.UserAddress == "" && filterdata.UserPhone == ""{
+	if filterdata.UserName == "" && filterdata.UserAddress == "" && filterdata.UserPhone == "" {
 		return true
 	}
 	return false
@@ -47,7 +51,10 @@ func filter(userdata UserData , filterdata UserData) bool{
 
 func GetUsers(c *gin.Context) {
 
-	curPage,_ := strconv.Atoi(c.Query("curPage"))
+	curPage, _ := strconv.Atoi(c.Query("curPage"))
+	if curPage < 1 {
+		curPage = 1
+	}
 	userName := c.Query("userName")
 	userAddress := c.Query("userAddress")
 	userPhone := c.Query("userPhone")
@@ -82,17 +89,17 @@ func GetUsers(c *gin.Context) {
 		for _, value := range rows {
 			if value[2] == strconv.Itoa(Database.Student) {
 				userData := UserData{UserName: value[0], Password: value[1], UserAddress: value[3], UserPhone: value[4]}
-				if filter(userData,filterData) {
+				if filter(userData, filterData) {
 					data = append(data, userData)
 				}
 			}
 		}
 
 		result := []UserData{}
-		if curPage*20 > len(data){
-			result = data[(curPage-1)*20:len(data)]
-		} else{
-			result = data[(curPage-1)*20:curPage*20]
+		if curPage*20 > len(data) {
+			result = data[(curPage-1)*20 : len(data)]
+		} else {
+			result = data[(curPage-1)*20 : curPage*20]
 		}
 		c.IndentedJSON(http.StatusOK, UsersRet{Success: true, Data: result})
 		return
@@ -102,20 +109,20 @@ func GetUsers(c *gin.Context) {
 			c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
 			return
 		}
-			data := []UserData{}
+		data := []UserData{}
 
-			for _, value := range rows {
+		for _, value := range rows {
 
-				userData := UserData{UserName: value[0], Password: value[1], UserAddress: value[3], UserPhone: value[4]}
-				if filter(userData,filterData) {
-					data = append(data, userData)
-				}
+			userData := UserData{UserName: value[0], Password: value[1], UserAddress: value[3], UserPhone: value[4]}
+			if filter(userData, filterData) {
+				data = append(data, userData)
+			}
 		}
 		result := []UserData{}
-		if curPage*20 > len(data){
-			result = data[(curPage-1)*20:len(data)]
-		} else{
-			result = data[(curPage-1)*20:curPage*20]
+		if curPage*20 > len(data) {
+			result = data[(curPage-1)*20 : len(data)]
+		} else {
+			result = data[(curPage-1)*20 : curPage*20]
 		}
 		c.IndentedJSON(http.StatusOK, UsersRet{Success: true, Data: result})
 		return
@@ -124,4 +131,55 @@ func GetUsers(c *gin.Context) {
 		return
 	}
 
+}
+
+func DeleteUser(c *gin.Context) {
+
+	claim, err := VertifyToken(c)
+	if err != nil {
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		return
+	}
+
+	authName := claim.Name
+	authPass := claim.Password
+
+	username := c.PostForm("userName")
+	password := c.PostForm("password")
+
+	property, err := Database.GetUserProperty(Database.User{Username: authName, Password: authPass})
+	if err != nil {
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		return
+	}
+
+	user, err := Database.SearchUser(Database.User{Username: username, Password: password})
+	if err != nil {
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		return
+	}
+
+	if property == Database.Student {
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: "your Property is Student, can't delete users"})
+		return
+	} else if property == Database.Staff {
+		if user.Property == Database.Student {
+			err = Database.DeleteUser(Database.User{Username: username, Password: password})
+			if err != nil {
+				c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+				return
+			}
+		} else {
+			c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: "your Property is Stuff, can only delete Student users"})
+			return
+		}
+	} else if property == Database.Faculty {
+		err = Database.DeleteUser(Database.User{Username: username, Password: password})
+		if err != nil {
+			c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+			return
+		}
+	}
+	c.IndentedJSON(http.StatusOK, DelRet{Success: true})
+	return
 }
