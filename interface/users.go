@@ -97,7 +97,7 @@ func GetUsers(c *gin.Context) {
 		}
 
 		result := []UserData{}
-		if curPage*20 > len(data) {
+		if curPage*10 > len(data) {
 			result = data[(curPage-1)*10:]
 		} else {
 			result = data[(curPage-1)*10 : curPage*10]

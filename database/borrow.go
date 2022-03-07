@@ -9,6 +9,15 @@ import (
 	"time"
 )
 
+type BorrowInfo struct {
+	BookId     int
+	Title      string
+	Author     string
+	Publisher  string
+	BorrowDate string
+	ReturnDate string
+}
+
 func Borrow(book Book, user User) error {
 	fmt.Println("Borrowing book:", book.Title, " to:", user.Username)
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
@@ -119,13 +128,96 @@ func GetBorrowed(book Book) ([]Copy, error) {
 		var str1, str2, str3, str4, str5, str6 string
 		err = rows.Scan(&str1, &str2, &str3, &str4, &str5, &str6)
 		if err != nil {
-			return result, err
-
+			return nil, err
 		}
 		copyid, _ := strconv.Atoi(str2)
 		bookid, _ := strconv.Atoi(str1)
 		result = append(result, Copy{CopyID: copyid, BookID: bookid})
 	}
 
-	return nil, nil
+	return result, nil
+}
+
+func GetBorrowingBy(user User) ([]BorrowInfo, error) {
+	fmt.Println("Searching books borrowed by :", user.Username)
+
+	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	rows, err := db.Query("SELECT * FROM Borrow WHERE username= $1 AND password=$2", user.Username, user.Password)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var result []BorrowInfo
+
+	for rows.Next() {
+		var str1, str2, str3, str4, str5, str6 string
+		err = rows.Scan(&str1, &str2, &str3, &str4, &str5, &str6)
+		if err != nil {
+			return nil, err
+		}
+		bookid, _ := strconv.Atoi(str1)
+		err := db.QueryRow("SELECT * FROM Books WHERE bookid=$1", bookid).Scan(nil, &str2, nil, &str3, nil, &str4, nil)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, BorrowInfo{
+			BookId:     bookid,
+			Title:      str2,
+			Author:     str3,
+			Publisher:  str4,
+			BorrowDate: str5,
+			ReturnDate: str6,
+		})
+	}
+
+	return result, nil
+}
+
+func GetBorrowedBy(user User) ([]BorrowInfo, error) {
+	fmt.Println("Searching books borrowed by :", user.Username)
+
+	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	rows, err := db.Query("SELECT * FROM Borrowhistory WHERE username= $1 AND password=$2", user.Username, user.Password)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var result []BorrowInfo
+
+	for rows.Next() {
+		var str1, str2, str3, str4, str5, str6 string
+		err = rows.Scan(&str1, &str2, &str3, &str4, &str5, &str6)
+		if err != nil {
+			return nil, err
+		}
+		bookid, _ := strconv.Atoi(str1)
+		err := db.QueryRow("SELECT * FROM Books WHERE bookid=$1", bookid).Scan(nil, &str2, nil, &str3, nil, &str4, nil)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, BorrowInfo{
+			BookId:     bookid,
+			Title:      str2,
+			Author:     str3,
+			Publisher:  str4,
+			BorrowDate: str5,
+			ReturnDate: str6,
+		})
+	}
+
+	return result, nil
 }
