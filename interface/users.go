@@ -98,11 +98,11 @@ func GetUsers(c *gin.Context) {
 
 		result := []UserData{}
 		if curPage*20 > len(data) {
-			result = data[(curPage-1)*20:]
+			result = data[(curPage-1)*10:]
 		} else {
-			result = data[(curPage-1)*20 : curPage*20]
+			result = data[(curPage-1)*10 : curPage*10]
 		}
-		c.IndentedJSON(http.StatusOK, UsersRet{Success: true, Data: result, Total: (len(data) / 20) + 1})
+		c.IndentedJSON(http.StatusOK, UsersRet{Success: true, Data: result, Total: len(data)})
 		return
 	} else if property == Database.Faculty {
 		rows, err := Database.GetAllUsers()
@@ -121,11 +121,11 @@ func GetUsers(c *gin.Context) {
 		}
 		result := []UserData{}
 		if curPage*20 > len(data) {
-			result = data[(curPage-1)*20:]
+			result = data[(curPage-1)*10:]
 		} else {
-			result = data[(curPage-1)*20 : curPage*20]
+			result = data[(curPage-1)*10 : curPage*10]
 		}
-		c.IndentedJSON(http.StatusOK, UsersRet{Success: true, Data: result, Total: (len(data) / 20) + 1})
+		c.IndentedJSON(http.StatusOK, UsersRet{Success: true, Data: result, Total: len(data)})
 		return
 	} else {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: "error: no Property found"})

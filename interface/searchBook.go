@@ -66,6 +66,7 @@ func SearchBook(c *gin.Context) {
 	if curPage < 1 {
 		curPage = 1
 	}
+
 	claim, err := VertifyToken(c)
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
@@ -107,20 +108,30 @@ func SearchBook(c *gin.Context) {
 			}
 			for _, value := range copies {
 				copyID, _ := strconv.Atoi(value[1])
-				// TODO search database for copy's checkout
-				copy := Copy{CopyID: copyID, LibName: value[2], LibLocation: value[3], Checkout: true}
+				isBorrowed := false
+				borrowed, err := Database.GetBorrowed(Database.Book{ID: bookData.Bookid})
+				if err != nil {
+					c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+					return
+				}
+				for _, value := range borrowed {
+					if value.CopyID == copyID {
+						isBorrowed = true
+					}
+				}
+				copy := Copy{CopyID: copyID, LibName: value[2], LibLocation: value[3], Checkout: isBorrowed}
 				bookData.Copy = append(bookData.Copy, copy)
 			}
 			data = append(data, bookData)
 		}
 	}
 
-	ret := BooksRet{Success: true, Total: (len(data) / 20) + 1}
+	ret := BooksRet{Success: true, Total: len(data)}
 
-	if curPage*20 > len(data) {
-		ret.Data = data[(curPage-1)*20:]
+	if curPage*10 > len(data) {
+		ret.Data = data[(curPage-1)*10:]
 	} else {
-		ret.Data = data[(curPage-1)*20 : curPage*20]
+		ret.Data = data[(curPage-1)*10 : curPage*10]
 	}
 	c.IndentedJSON(http.StatusOK, ret)
 

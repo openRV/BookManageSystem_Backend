@@ -18,6 +18,8 @@ func main() {
 	router.DELETE("/faculty/delusers", Interface.DeleteUser)
 	router.GET("/users/books", Interface.SearchBook)
 	router.DELETE("/faculty/delbook", Interface.DeleteBook)
+	router.POST("/users/borrow", Interface.BorrowBook)
+	router.POST("/users/return", Interface.ReturnBook)
 	err := router.Run("localhost:8080")
 	if err != nil {
 		fmt.Println(err)
