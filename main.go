@@ -16,6 +16,7 @@ func main() {
 	router.POST("/users/modify", Interface.ModifyAccount)
 	router.POST("/admin/delusers", Interface.DeleteUser)
 	router.POST("/faculty/delusers", Interface.DeleteUser)
+	router.GET("/users/books", Interface.SearchBook)
 	err := router.Run("localhost:8080")
 	if err != nil {
 		fmt.Println(err)
