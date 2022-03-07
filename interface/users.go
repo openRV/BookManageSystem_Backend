@@ -20,6 +20,7 @@ type UserData struct {
 
 type UsersRet struct {
 	Success bool       `json:"success"`
+	Total   int        `json:"total"`
 	Data    []UserData `json:"data"`
 }
 
@@ -101,7 +102,7 @@ func GetUsers(c *gin.Context) {
 		} else {
 			result = data[(curPage-1)*20 : curPage*20]
 		}
-		c.IndentedJSON(http.StatusOK, UsersRet{Success: true, Data: result})
+		c.IndentedJSON(http.StatusOK, UsersRet{Success: true, Data: result, Total: (len(data) / 20) + 1})
 		return
 	} else if property == Database.Faculty {
 		rows, err := Database.GetAllUsers()
@@ -124,7 +125,7 @@ func GetUsers(c *gin.Context) {
 		} else {
 			result = data[(curPage-1)*20 : curPage*20]
 		}
-		c.IndentedJSON(http.StatusOK, UsersRet{Success: true, Data: result})
+		c.IndentedJSON(http.StatusOK, UsersRet{Success: true, Data: result, Total: (len(data) / 20) + 1})
 		return
 	} else {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: "error: no Property found"})
