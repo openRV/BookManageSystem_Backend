@@ -123,6 +123,7 @@ func SearchConferencePaper(PaperTitle string, PaperAuthor string, ConferenceTitl
 	for _, paperArr := range paper {
 		for _, conferenceArr := range conference {
 			if paperArr[5] == conferenceArr[0] {
+				//paperid,papertitle,author,publishdate,publishaddress,conferencetitle,proceedingeditor
 				result = append(result, [7]string{paperArr[0], paperArr[2], paperArr[1], conferenceArr[3], conferenceArr[4], conferenceArr[1], conferenceArr[2]})
 			}
 		}
@@ -148,7 +149,9 @@ func SearchJournalPaper(PaperTitle string, PaperAuthor string, JournalTitle stri
 		for _, journalArr := range journal {
 			for _, volumnArr := range volumn {
 				if paperArr[3] == journalArr[0] && paperArr[3] == volumnArr[0] && paperArr[4] == volumnArr[1] {
-					result = append(result, [9]string{paperArr[0],
+					//paperid,papertitlr,author,publicationdate,scope,journaltitle,journaleditor,volumnid,volumneditor
+					result = append(result, [9]string{
+						paperArr[0],
 						paperArr[2],
 						paperArr[1],
 						volumnArr[3],
