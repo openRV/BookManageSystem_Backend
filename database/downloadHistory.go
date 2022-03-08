@@ -79,7 +79,7 @@ func InsertDownload(info DownloadInfo) error {
 	return nil
 }
 
-func DeleteHistory(Username string, Userpassword string, Paperid string,info Downloaddate string) error{
+func DeleteHistory(Username string, Userpassword string, Paperid string, Downloaddate string) error {
 	//TODO: To Complete
-	return nill
+	return nil
 }
