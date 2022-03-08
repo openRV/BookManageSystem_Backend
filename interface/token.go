@@ -14,16 +14,17 @@ var secret = []byte("bookmanagesystem")
 var effectTime = 24 * time.Hour
 
 type Claim struct {
-	Name     string `json:"userName"`
+	Name     string `json:"username"`
 	Password string `json:"password"`
 	jwt.StandardClaims
 }
 
-func GetToken(ctx *gin.Context) string {
+func GetToken(json map[string]string) string {
+
 	expireTime := time.Now().Add(effectTime)
 	claims := &Claim{
-		Name:     ctx.PostForm("userName"),
-		Password: ctx.PostForm("password"),
+		Name:     json["username"],
+		Password: json["password"],
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			IssuedAt:  time.Now().Unix(),
@@ -49,16 +50,18 @@ func parseToken(tokenString string) (*jwt.Token, *Claim, error) {
 }
 
 func VertifyToken(ctx *gin.Context) (*Claim, error) {
+
 	tokenString := ctx.GetHeader("Authorization")
+
 	if tokenString == "" {
 		return nil, errors.New("empty tokenString")
 	}
 	token, claim, err := parseToken(tokenString)
 	if err != nil || !token.Valid {
 		return nil, errors.New("Invalid Token")
-}
+	}
 
-fmt.Println("Parsed token: name:",claim.Name," password:",claim.Password)
-return claim, nil
+	fmt.Println("Parsed token: name:", claim.Name, " password:", claim.Password)
+	return claim, nil
 
 }
