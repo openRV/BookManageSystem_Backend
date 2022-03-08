@@ -1,7 +1,7 @@
 package Interface
 
 import (
-	Database "bookms/database"
+	"bookms/Database"
 	"net/http"
 	"strconv"
 
