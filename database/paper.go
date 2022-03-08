@@ -168,6 +168,7 @@ func SearchJournalPaper(PaperTitle string, PaperAuthor string, JournalTitle stri
 	return result, nil
 }
 
+//TODO: To complete
 func InsertPaper(data PaperData) error {
 	/*
 		db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)

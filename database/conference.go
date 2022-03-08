@@ -65,7 +65,6 @@ func SearchConference(conferenceTitle string, proceedingEditor string) ([][5]str
 	return result, nil
 }
 
-//TODO: To cpmlete
 func InsertConference(data ConferenceData) error {
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
