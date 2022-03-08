@@ -75,10 +75,10 @@ func SearchConferencePaper(c *gin.Context) {
 		Success: true,
 		Total:   len(data)}
 
-	if curPage*7 > len(data) {
-		ret.Data = data[(curPage-1)*7:]
+	if curPage*10 > len(data) {
+		ret.Data = data[(curPage-1)*10:]
 	} else {
-		ret.Data = data[(curPage-1)*7 : curPage*7]
+		ret.Data = data[(curPage-1)*10 : curPage*10]
 	}
 	c.IndentedJSON(http.StatusOK, ret)
 }
@@ -156,10 +156,10 @@ func SearchJournalPaper(c *gin.Context) {
 		Success: true,
 		Total:   len(data)}
 
-	if curPage*9 > len(data) {
-		ret.Data = data[(curPage-1)*9:]
+	if curPage*10 > len(data) {
+		ret.Data = data[(curPage-1)*10:]
 	} else {
-		ret.Data = data[(curPage-1)*9 : curPage*9]
+		ret.Data = data[(curPage-1)*10 : curPage*10]
 	}
 	c.IndentedJSON(http.StatusOK, ret)
 }
