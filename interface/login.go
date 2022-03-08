@@ -8,9 +8,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type userRet struct {
-	Success string `json:"success"`
-	Token   string `json:"token"`
+type UserToken struct {
+	Token string `json:"token"`
+	Role  string `json:"role"`
+}
+
+type UserRet struct {
+	Success string    `json:"success"`
+	Data    UserToken `json:"data"`
 }
 
 func PostUser(c *gin.Context) {
@@ -22,12 +27,21 @@ func PostUser(c *gin.Context) {
 	password := json["password"]
 
 	token := GetToken(c)
-	_, err := Database.SearchUser(Database.User{Username: username, Password: password})
+	user, err := Database.SearchUser(Database.User{Username: username, Password: password})
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
 		return
 	}
 
-	c.IndentedJSON(http.StatusOK, userRet{Success: "true", Token: token})
+	var str string
+	if user.Property == Database.Student {
+		str = "STU"
+	} else if user.Property == Database.Staff {
+		str = "FAC"
+	} else {
+		str = "ADM"
+	}
+
+	c.IndentedJSON(http.StatusOK, UserRet{Success: "true", Data: UserToken{Token: token, Role: str}})
 
 }
