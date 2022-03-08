@@ -23,7 +23,10 @@ func main() {
 	router.GET("/users/borrowing", Interface.Borrowing)
 	router.GET("/users/borrowed", Interface.Borrowed)
 	router.POST("faculty/addbook", Interface.AddBook)
-	router.POST("/admin/addbook", Interface.AddBook)
+	router.POST("admin/addbook", Interface.AddBook)
+	router.DELETE("/faculty/delpaper", Interface.DeletePaper)
+	router.GET("/users/conference", Interface.SearchConferencePaper)
+	router.GET("/users/journal", Interface.SearchJournalPaper)
 	err := router.Run("localhost:8080")
 	if err != nil {
 		fmt.Println(err)

@@ -25,7 +25,7 @@ type ConferencePaperRet struct {
 	Total   int                   `json:"total"`
 }
 
-func SearchConferencebook(c *gin.Context) {
+func SearchConferencePaper(c *gin.Context) {
 	curPage, _ := strconv.Atoi(c.Query("curPage"))
 	title := c.Query("title")
 	author := c.Query("author")

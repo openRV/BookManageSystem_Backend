@@ -11,7 +11,7 @@ type DelPaperRet struct {
 }
 
 func DeletePaper(c *gin.Context) {
-	paperid := c.Query("paperId")
+	paperid := c.Param("paperId")
 
 	claim, err := VertifyToken(c)
 	if err != nil {
