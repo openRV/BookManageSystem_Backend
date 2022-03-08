@@ -23,7 +23,7 @@ func main() {
 	router.GET("/users/borrowing", Interface.Borrowing)
 	router.GET("/users/borrowed", Interface.Borrowed)
 	router.POST("faculty/addbook", Interface.AddBook)
-	router.POST("admin/addbook", Interface.AddBook)
+	router.POST("/admin/addbook", Interface.AddBook)
 	err := router.Run("localhost:8080")
 	if err != nil {
 		fmt.Println(err)

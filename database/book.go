@@ -139,3 +139,14 @@ func DelCopy(book Book) error {
 	fmt.Println("Delete Copy success")
 	return nil
 }
+
+func AddBook(book Book) error {
+
+	// TODO
+	return nil
+}
+
+func AddCopy(copy Copy) error {
+	// TODO
+	return nil
+}
