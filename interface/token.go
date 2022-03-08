@@ -19,12 +19,12 @@ type Claim struct {
 	jwt.StandardClaims
 }
 
-func GetToken(json map[string]string) string {
+func GetToken(json map[string]interface{}) string {
 
 	expireTime := time.Now().Add(effectTime)
 	claims := &Claim{
-		Name:     json["username"],
-		Password: json["password"],
+		Name:     json["username"].(string),
+		Password: json["password"].(string),
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			IssuedAt:  time.Now().Unix(),

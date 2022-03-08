@@ -45,20 +45,20 @@ func ModifyAccount(c *gin.Context) {
 		return
 	}
 
-	json := make(map[string]string)
+	json := make(map[string]interface{})
 	c.BindJSON(&json)
 
-	userName := json["userName"]
-	userAddress := json["userAddress"]
-	userPhone := json["userPhone"]
-	changePassword := json["changePassword"]
-	oldPassword := json["oldPassword"]
-	newPassword := json["newPassword"]
+	userName := json["userName"].(string)
+	userAddress := json["userAddress"].(string)
+	userPhone := json["userPhone"].(string)
+	changePassword := json["changePassword"].(bool)
+	oldPassword := json["oldPassword"].(string)
+	newPassword := json["newPassword"].(string)
 
 	username := claim.Name
 	password := claim.Password
 
-	if changePassword == "true" && oldPassword != password {
+	if changePassword && oldPassword != password {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: "old password dismatch"})
 		return
 	}
@@ -70,7 +70,7 @@ func ModifyAccount(c *gin.Context) {
 	}
 
 	finalPassword := password
-	if changePassword == "true" {
+	if changePassword {
 		finalPassword = newPassword
 	}
 

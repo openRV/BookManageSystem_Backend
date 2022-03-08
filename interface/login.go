@@ -20,11 +20,11 @@ type UserRet struct {
 
 func PostUser(c *gin.Context) {
 
-	json := make(map[string]string)
+	json := make(map[string]interface{})
 	c.BindJSON(&json)
 
-	username := json["username"]
-	password := json["password"]
+	username := json["username"].(string)
+	password := json["password"].(string)
 
 	token := GetToken(json)
 	user, err := Database.SearchUser(Database.User{Username: username, Password: password})
