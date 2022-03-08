@@ -142,11 +142,55 @@ func DelCopy(book Book) error {
 
 func AddBook(book Book) error {
 
-	// TODO
+	fmt.Println("Adding: book:", book.Title)
+	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer db.Close()
+
+	stmt, err := db.Prepare("INSERT INTO Book (bookid,booktitle,copynum,author,publicationdate,publishername,publisheraddress) VALUES ($1,$2,$3,$4,$5,$6,$7)")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(book.ID, book.Title, book.CopyNum, book.Author, book.PublicationDate, book.PublisherName, book.PublisherAddress)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	fmt.Println("Insert success!")
 	return nil
 }
 
 func AddCopy(copy Copy) error {
-	// TODO
+
+	fmt.Println("Adding: book:", copy.CopyID)
+	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer db.Close()
+
+	stmt, err := db.Prepare("INSERT INTO Bookcopy (bookid,copyid,libraryname,librarylocation) VALUES ($1,$2,$3,$4)")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(copy.BookID, copy.CopyID, copy.LibraryName, copy.LibraryLocation)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	fmt.Println("Insert success!")
+
 	return nil
 }

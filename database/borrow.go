@@ -75,7 +75,6 @@ func Borrow(book Book, user User) error {
 		return err
 	}
 
-	// TODO: insert information into table Borrow
 	fmt.Println("Borrow success")
 
 	return nil
@@ -89,6 +88,15 @@ func Return(book Book, user User) error {
 		return err
 	}
 	defer db.Close()
+
+	borrowing, err := GetBorrowingBy(user)
+	if err != nil {
+		return err
+	}
+
+	if len(borrowing) != 0 {
+		return errors.New("have unreturned books, please return books first")
+	}
 
 	stmt, err := db.Prepare("DELETE FROM Borrow WHERE bookid=$1 AND username=$2 AND password=$3")
 	if err != nil {
