@@ -14,6 +14,40 @@ type PaperData struct {
 	VolumnId     string `json:"VolumeNum"`
 	ConferenceId string
 	Link         string `json:"Link"`
+	IsOpen       string
+}
+
+func GetOpenPaper() ([][5]string, error) {
+
+	var result [][5]string
+	temp, err := SearchPaper("", "")
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	for _, value := range temp {
+		if value[7] == "True" {
+			if value[5] != "" {
+				conferenceResult, err := SearchConference1(value[5])
+				if err != nil {
+					fmt.Println(err)
+					return nil, err
+				}
+				result = append(result, [5]string{value[0], value[2], value[1], conferenceResult, value[6]})
+			}
+			if value[3] != "" && value[4] != "" {
+				volumnresult, err := SearchVolumn1(value[3], value[4])
+				if err != nil {
+					fmt.Println(err)
+					return nil, err
+				}
+				result = append(result, [5]string{value[0], value[2], value[1], volumnresult, value[6]})
+			}
+		}
+	}
+	return result, nil
+
 }
 
 func SearchPaper1(Conferenceid string) (bool, error) {
@@ -76,7 +110,7 @@ func SearchPaper3(Journalid string) (bool, error) {
 
 }
 
-func SearchPaper(PaperTitle string, PaperAuthor string) ([][7]string, error) {
+func SearchPaper(PaperTitle string, PaperAuthor string) ([][8]string, error) {
 	fmt.Println("getting papers...")
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
@@ -85,6 +119,7 @@ func SearchPaper(PaperTitle string, PaperAuthor string) ([][7]string, error) {
 	}
 	defer db.Close()
 
+	//paper id, author, paper title, journal id, column id, conference id, link, is open
 	rows, err := db.Query("SELECT * FROM Paper")
 	if err != nil {
 		fmt.Println(err)
@@ -92,16 +127,16 @@ func SearchPaper(PaperTitle string, PaperAuthor string) ([][7]string, error) {
 	}
 	defer rows.Close()
 
-	var result [][7]string
+	var result [][8]string
 
 	for rows.Next() {
-		var str1, str2, str3, str4, str5, str6, str7 string
-		err = rows.Scan(&str1, &str2, &str3, &str4, &str5, &str6, &str7)
+		var str1, str2, str3, str4, str5, str6, str7, str8 string
+		err = rows.Scan(&str1, &str2, &str3, &str4, &str5, &str6, &str7, &str8)
 		if err != nil {
 			return result, err
 		}
 		if strings.Contains(str3, PaperTitle) && strings.Contains(str2, PaperAuthor) {
-			result = append(result, [7]string{str1, str2, str3, str4, str5, str6, str7})
+			result = append(result, [8]string{str1, str2, str3, str4, str5, str6, str7, str8})
 		}
 	}
 

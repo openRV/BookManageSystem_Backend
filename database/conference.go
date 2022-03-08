@@ -14,7 +14,6 @@ type ConferenceData struct {
 	PublishAddress   string `json:"publicAddress"`
 }
 
-/*
 func SearchConference1(conferenceId string) (string, error) {
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
@@ -24,14 +23,14 @@ func SearchConference1(conferenceId string) (string, error) {
 	defer db.Close()
 
 	var result string
-	err = db.QueryRow("SELECT conferenceid FROM Conference WHERE conferenceid = $1", conferenceId).Scan(&result)
+	err = db.QueryRow("SELECT publiahsdate FROM Conference WHERE conferenceid = $1", conferenceId).Scan(&result)
 	if err != nil {
 		fmt.Println(err)
 		return "", err
 	}
 
 	return result, nil
-}*/
+}
 
 func SearchConference(conferenceTitle string, proceedingEditor string) ([][5]string, error) {
 	fmt.Println("geting all conference")

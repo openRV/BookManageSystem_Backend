@@ -13,6 +13,23 @@ type VolumnData struct {
 	PublicationDate string `json:"publicationDate"`
 }
 
+func SearchVolumn1(journalId string, volumnId string) (string, error) {
+	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
+	if err != nil {
+		fmt.Println(err)
+		return "", err
+	}
+	defer db.Close()
+
+	var result string
+	err = db.QueryRow("SELECT publicationdate FROM Volumn WHERE journalid = $1 AND volumnid =$2", journalId, volumnId).Scan(&result)
+	if err != nil {
+		fmt.Println(err)
+		return "", err
+	}
+
+	return result, nil
+}
 func SearchVolumn(volumnId string, volumnEditor string) ([][4]string, error) {
 	fmt.Println("getting Volumn...")
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
