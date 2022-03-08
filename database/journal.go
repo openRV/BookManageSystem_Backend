@@ -14,6 +14,7 @@ type JournalData struct {
 }
 
 func SearchJournal(JournalTitle string, Scope string) ([][5]string, error) {
+	fmt.Println("Getting Journals...")
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -41,11 +42,13 @@ func SearchJournal(JournalTitle string, Scope string) ([][5]string, error) {
 		}
 	}
 
+	fmt.Println("Successfully get!")
 	return result, nil
 
 }
 
 func InsertJournal(data JournalData) error {
+	fmt.Println("Insert a Journal...")
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -77,7 +80,7 @@ func InsertJournal(data JournalData) error {
 }
 
 func DeleteJournal(JournalId string) error {
-	//fmt.Println("Deletinging: username:", user.Username, " password:", user.Password)
+	fmt.Println("Deletinging a Journal")
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)

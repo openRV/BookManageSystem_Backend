@@ -75,7 +75,7 @@ func Borrow(book Book, user User) error {
 		return err
 	}
 
-	// TODO: insert information into table BorrowHistory
+	// TODO: insert information into table Borrow
 	fmt.Println("Borrow success")
 
 	return nil

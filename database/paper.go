@@ -17,6 +17,7 @@ type PaperData struct {
 }
 
 func SearchPaper1(Conferenceid string) (bool, error) {
+	fmt.Println("Verify whether are more papers in same Conference...")
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -36,6 +37,7 @@ func SearchPaper1(Conferenceid string) (bool, error) {
 }
 
 func SearchPaper2(Journalid string, Volumnid string) (bool, error) {
+	fmt.Println("Examing whether there are more papers in same JournalColumn...")
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -55,6 +57,7 @@ func SearchPaper2(Journalid string, Volumnid string) (bool, error) {
 }
 
 func SearchPaper3(Journalid string) (bool, error) {
+	fmt.Println("Examing whether there are more papers in same Journal...")
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -74,7 +77,7 @@ func SearchPaper3(Journalid string) (bool, error) {
 }
 
 func SearchPaper(PaperTitle string, PaperAuthor string) ([][7]string, error) {
-	//fmt.Println("geting all users")
+	fmt.Println("getting papers...")
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -102,10 +105,12 @@ func SearchPaper(PaperTitle string, PaperAuthor string) ([][7]string, error) {
 		}
 	}
 
+	fmt.Println("Successfully get!")
 	return result, nil
 }
 
 func SearchConferencePaper(PaperTitle string, PaperAuthor string, ConferenceTitle string, ProceedingEditor string) ([][7]string, error) {
+	fmt.Println("Getting papers from certain Conference...")
 	var result [][7]string
 	conference, err := SearchConference(ConferenceTitle, ProceedingEditor)
 	if err != nil {
@@ -122,10 +127,13 @@ func SearchConferencePaper(PaperTitle string, PaperAuthor string, ConferenceTitl
 			}
 		}
 	}
+
+	fmt.Println("Successfull get!")
 	return result, nil
 }
 
 func SearchJournalPaper(PaperTitle string, PaperAuthor string, JournalTitle string, JournalScope string, VolumnNum string, VolumnEditor string) ([][9]string, error) {
+	fmt.Println("Getting papers from sertain Journal Volumn...")
 	var result [][9]string
 	paper, err := SearchPaper(PaperTitle, PaperAuthor)
 	if err != nil {
@@ -153,6 +161,7 @@ func SearchJournalPaper(PaperTitle string, PaperAuthor string, JournalTitle stri
 			}
 		}
 	}
+	fmt.Println("Successfully get!")
 	return result, nil
 }
 
@@ -195,7 +204,7 @@ func InsertPaper(data PaperData) error {
 }
 
 func DeletePaper(PaperId string) error {
-	//fmt.Println("Deletinging: username:", user.Username, " password:", user.Password)
+	fmt.Println("Deleting a paper...")
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)

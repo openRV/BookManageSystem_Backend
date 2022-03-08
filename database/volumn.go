@@ -14,7 +14,7 @@ type VolumnData struct {
 }
 
 func SearchVolumn(volumnId string, volumnEditor string) ([][4]string, error) {
-	//fmt.Println("geting all conference")
+	fmt.Println("getting Volumn...")
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -41,12 +41,13 @@ func SearchVolumn(volumnId string, volumnEditor string) ([][4]string, error) {
 			result = append(result, [4]string{str1, str2, str3, str4})
 		}
 	}
-
+	fmt.Println("Successfully get Volumn")
 	return result, nil
 
 }
 
 func InsertVolumn(data VolumnData) error {
+	fmt.Println("Inserting a volumn...")
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -77,6 +78,7 @@ func InsertVolumn(data VolumnData) error {
 }
 
 func DeleteVolumn(journalid string, volumnid string) error {
+	fmt.Println("Deleting a volumn...")
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
