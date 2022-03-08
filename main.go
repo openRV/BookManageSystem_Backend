@@ -2,6 +2,7 @@ package main
 
 import (
 	"bookms/Interface"
+	"bookms/middleware"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -9,6 +10,9 @@ import (
 
 func main() {
 	router := gin.Default()
+
+	router.Use(middleware.Cors())
+
 	router.POST("/login", Interface.PostUser)
 	router.POST("/register", Interface.RegisterUser)
 	router.GET("/faculty/users", Interface.GetUsers)
