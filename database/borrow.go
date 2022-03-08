@@ -98,7 +98,7 @@ func Return(book Book, user User) error {
 		return errors.New("have unreturned books, please return books first")
 	}
 
-	stmt, err := db.Prepare("DELETE FROM Borrow WHERE bookid=$1 AND username=$2 AND password=$3")
+	stmt, err := db.Prepare("DELETE FROM Borrow WHERE bookid=$1 AND username=$2 AND userpassword=$3")
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -155,7 +155,7 @@ func GetBorrowingBy(user User) ([]BorrowInfo, error) {
 	}
 	defer db.Close()
 
-	rows, err := db.Query("SELECT * FROM Borrow WHERE username= $1 AND password=$2", user.Username, user.Password)
+	rows, err := db.Query("SELECT * FROM Borrow WHERE username= $1 AND userpassword=$2", user.Username, user.Password)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
@@ -197,7 +197,7 @@ func GetBorrowedBy(user User) ([]BorrowInfo, error) {
 	}
 	defer db.Close()
 
-	rows, err := db.Query("SELECT * FROM Borrowhistory WHERE username= $1 AND password=$2", user.Username, user.Password)
+	rows, err := db.Query("SELECT * FROM Borrowhistory WHERE username= $1 AND userpassword=$2", user.Username, user.Password)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err

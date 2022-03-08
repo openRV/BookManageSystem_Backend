@@ -13,10 +13,14 @@ type RegisterRet struct {
 }
 
 func RegisterUser(c *gin.Context) {
-	username := c.PostForm("userName")
-	password := c.PostForm("password")
-	userAddress := c.PostForm("userAddress")
-	userPhone := c.PostForm("userPhone")
+
+	json := make(map[string]string)
+	c.BindJSON(&json)
+
+	username := json["username"]
+	password := json["password"]
+	userAddress := json["useraddress"]
+	userPhone := json["userphone"]
 
 	fmt.Println(username, password, userAddress, userPhone)
 

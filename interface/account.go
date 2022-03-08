@@ -45,12 +45,15 @@ func ModifyAccount(c *gin.Context) {
 		return
 	}
 
-	userName := c.PostForm("userName")
-	userAddress := c.PostForm("userAddress")
-	userPhone := c.PostForm("userPhone")
-	changePassword := c.PostForm("changePassword")
-	oldPassword := c.PostForm("oldPassword")
-	newPassword := c.PostForm("newPassword")
+	json := make(map[string]string)
+	c.BindJSON(&json)
+
+	userName := json["userName"]
+	userAddress := json["userAddress"]
+	userPhone := json["userPhone"]
+	changePassword := json["changePassword"]
+	oldPassword := json["oldPassword"]
+	newPassword := json["newPassword"]
 
 	username := claim.Name
 	password := claim.Password
