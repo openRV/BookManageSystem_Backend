@@ -2,6 +2,7 @@ package Interface
 
 import (
 	"bookms/Database"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -23,6 +24,7 @@ func GetAccount(c *gin.Context) {
 	claim, err := VertifyToken(c)
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 
@@ -32,6 +34,7 @@ func GetAccount(c *gin.Context) {
 	User, err := Database.SearchUser(Database.User{Username: username, Password: password})
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 	data := accountData{UserName: User.Username, Password: User.Password, UserAddress: User.Address, UserPhone: User.Phone}
@@ -42,6 +45,7 @@ func ModifyAccount(c *gin.Context) {
 	claim, err := VertifyToken(c)
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 
@@ -60,12 +64,14 @@ func ModifyAccount(c *gin.Context) {
 
 	if changePassword && oldPassword != password {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: "old password dismatch"})
+		fmt.Println(err)
 		return
 	}
 	err = Database.DeleteUser(Database.User{Username: username, Password: password})
 
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 
@@ -77,6 +83,7 @@ func ModifyAccount(c *gin.Context) {
 	err = Database.RegisterUser(Database.User{Username: userName, Address: userAddress, Phone: userPhone, Password: finalPassword, Property: Database.Student})
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 	c.IndentedJSON(http.StatusOK, AccountRet{Success: true, Data: accountData{UserName: userName, UserAddress: userAddress, UserPhone: userPhone, Password: finalPassword}})

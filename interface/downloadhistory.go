@@ -2,6 +2,7 @@ package Interface
 
 import (
 	"bookms/Database"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -29,6 +30,7 @@ func SearchDownH(c *gin.Context) {
 	claim, err := VertifyToken(c)
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 
@@ -38,6 +40,7 @@ func SearchDownH(c *gin.Context) {
 	history, err := Database.SearchDownload(authName, authPass)
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 

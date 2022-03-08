@@ -2,6 +2,7 @@ package Interface
 
 import (
 	"bookms/Database"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -9,14 +10,14 @@ import (
 )
 
 type Copy struct {
-	CopyID      int    `json:"copyID"`
+	CopyID      string `json:"copyId"`
 	LibName     string `json:"libName"`
 	LibLocation string `json:"libLocation"`
 	Checkout    bool   `json:"checkout"`
 }
 
 type BookData struct {
-	Bookid     int    `json:"bookId"`
+	Bookid     string `json:"bookId"`
 	Title      string `json:"title"`
 	Num        int    `json:"num"`
 	Author     string `json:"author"`
@@ -70,6 +71,7 @@ func SearchBook(c *gin.Context) {
 	claim, err := VertifyToken(c)
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 
@@ -79,12 +81,14 @@ func SearchBook(c *gin.Context) {
 	_, err = Database.GetUserProperty(Database.User{Username: authName, Password: authPass})
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 
 	allBooks, err := Database.GetAllBook()
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 
@@ -93,7 +97,7 @@ func SearchBook(c *gin.Context) {
 		id, _ := strconv.Atoi(value[0])
 		num, _ := strconv.Atoi(value[2])
 		bookData := BookData{
-			Bookid:     id,
+			Bookid:     value[0],
 			Title:      value[1],
 			Num:        num,
 			Author:     value[3],
@@ -101,21 +105,24 @@ func SearchBook(c *gin.Context) {
 			PublicDate: value[4],
 		}
 		if bookfilter(bookData, filterTemplate) {
-			copies, err := Database.GetAllCopy(Database.Book{ID: bookData.Bookid})
+			copies, err := Database.GetAllCopy(Database.Book{ID: id, Title: bookData.Title})
 			if err != nil {
 				c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+				fmt.Println(err)
 				return
 			}
 			for _, value := range copies {
-				copyID, _ := strconv.Atoi(value[1])
+				copyID := value[1]
+				copyIDInt, _ := strconv.Atoi(value[1])
 				isBorrowed := false
-				borrowed, err := Database.GetBorrowed(Database.Book{ID: bookData.Bookid})
+				borrowed, err := Database.GetBorrowed(Database.Book{ID: id})
 				if err != nil {
 					c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+					fmt.Println(err)
 					return
 				}
 				for _, value := range borrowed {
-					if value.CopyID == copyID {
+					if value.CopyID == copyIDInt {
 						isBorrowed = true
 					}
 				}

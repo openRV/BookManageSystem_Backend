@@ -2,6 +2,7 @@ package Interface
 
 import (
 	"bookms/Database"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -18,6 +19,7 @@ func DeleteBook(c *gin.Context) {
 	claim, err := VertifyToken(c)
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 
@@ -27,6 +29,7 @@ func DeleteBook(c *gin.Context) {
 	property, err := Database.GetUserProperty(Database.User{Username: authName, Password: authPass})
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 
@@ -38,6 +41,9 @@ func DeleteBook(c *gin.Context) {
 	err = Database.DelBook(Database.Book{ID: bookId})
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
+
+	c.IndentedJSON(http.StatusOK, DelBookRet{Success: true})
 }

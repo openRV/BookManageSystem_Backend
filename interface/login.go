@@ -1,6 +1,7 @@
 package Interface
 
 import (
+	"fmt"
 	"net/http"
 
 	"bookms/Database"
@@ -30,6 +31,7 @@ func PostUser(c *gin.Context) {
 	user, err := Database.SearchUser(Database.User{Username: username, Password: password})
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 

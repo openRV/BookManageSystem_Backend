@@ -2,6 +2,7 @@ package Interface
 
 import (
 	"bookms/Database"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -64,6 +65,7 @@ func GetUsers(c *gin.Context) {
 	claim, err := VertifyToken(c)
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 
@@ -73,16 +75,19 @@ func GetUsers(c *gin.Context) {
 	property, err := Database.GetUserProperty(Database.User{Username: authName, Password: authPass})
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 
 	if property == Database.Student {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	} else if property == Database.Staff {
 		rows, err := Database.GetAllUsers()
 		if err != nil {
 			c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+			fmt.Println(err)
 			return
 		}
 
@@ -108,6 +113,7 @@ func GetUsers(c *gin.Context) {
 		rows, err := Database.GetAllUsers()
 		if err != nil {
 			c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+			fmt.Println(err)
 			return
 		}
 		data := []UserData{}
@@ -139,24 +145,30 @@ func DeleteUser(c *gin.Context) {
 	claim, err := VertifyToken(c)
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 
 	authName := claim.Name
 	authPass := claim.Password
 
-	username := c.Param("userName")
-	password := c.Param("password")
+	json := make(map[string]interface{})
+	c.BindJSON(&json)
+
+	username := json["userName"].(string)
+	password := json["password"].(string)
 
 	property, err := Database.GetUserProperty(Database.User{Username: authName, Password: authPass})
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 
 	user, err := Database.SearchUser(Database.User{Username: username, Password: password})
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 
@@ -168,6 +180,7 @@ func DeleteUser(c *gin.Context) {
 			err = Database.DeleteUser(Database.User{Username: username, Password: password})
 			if err != nil {
 				c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+				fmt.Println(err)
 				return
 			}
 		} else {
@@ -178,6 +191,7 @@ func DeleteUser(c *gin.Context) {
 		err = Database.DeleteUser(Database.User{Username: username, Password: password})
 		if err != nil {
 			c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+			fmt.Println(err)
 			return
 		}
 	}

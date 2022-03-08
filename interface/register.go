@@ -9,7 +9,7 @@ import (
 )
 
 type RegisterRet struct {
-	Success bool
+	Success bool `json:"success"`
 }
 
 func RegisterUser(c *gin.Context) {
@@ -17,16 +17,15 @@ func RegisterUser(c *gin.Context) {
 	json := make(map[string]string)
 	c.BindJSON(&json)
 
-	username := json["username"]
+	username := json["userName"]
 	password := json["password"]
-	userAddress := json["useraddress"]
-	userPhone := json["userphone"]
-
-	fmt.Println(username, password, userAddress, userPhone)
+	userAddress := json["userAddress"]
+	userPhone := json["userPhone"]
 
 	err := Database.RegisterUser(Database.User{Username: username, Password: password, Address: userAddress, Phone: userPhone, Property: Database.Student})
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 

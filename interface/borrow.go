@@ -2,6 +2,7 @@ package Interface
 
 import (
 	"bookms/Database"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -27,11 +28,18 @@ type BorrowInfoRet struct {
 }
 
 func BorrowBook(c *gin.Context) {
-	bookId, _ := strconv.Atoi(c.PostForm("bookId"))
+
+	json := make(map[string]interface{})
+	c.BindJSON(&json)
+
+	bookId, _ := strconv.Atoi(json["bookId"].(string))
+
+	fmt.Println(bookId)
 
 	claim, err := VertifyToken(c)
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 
@@ -41,6 +49,7 @@ func BorrowBook(c *gin.Context) {
 	err = Database.Borrow(Database.Book{ID: bookId}, Database.User{Username: authName, Password: authPass})
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 
@@ -50,11 +59,17 @@ func BorrowBook(c *gin.Context) {
 
 func ReturnBook(c *gin.Context) {
 
-	bookId, _ := strconv.Atoi(c.PostForm("bookId"))
+	json := make(map[string]interface{})
+	c.BindJSON(&json)
+
+	bookId := int(json["bookId"].(float64))
+
+	fmt.Println(bookId)
 
 	claim, err := VertifyToken(c)
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 
@@ -64,6 +79,7 @@ func ReturnBook(c *gin.Context) {
 	err = Database.Return(Database.Book{ID: bookId}, Database.User{Username: authName, Password: authPass})
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 
@@ -80,6 +96,7 @@ func Borrowing(c *gin.Context) {
 	claim, err := VertifyToken(c)
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 
@@ -89,6 +106,7 @@ func Borrowing(c *gin.Context) {
 	borrowing, err := Database.GetBorrowingBy(Database.User{Username: authName, Password: authPass})
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 	var data []BorrowInfo
@@ -123,6 +141,7 @@ func Borrowed(c *gin.Context) {
 	claim, err := VertifyToken(c)
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 
@@ -132,6 +151,7 @@ func Borrowed(c *gin.Context) {
 	borrowing, err := Database.GetBorrowedBy(Database.User{Username: authName, Password: authPass})
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
 		return
 	}
 	var data []BorrowInfo
