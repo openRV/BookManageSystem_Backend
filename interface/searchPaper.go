@@ -163,3 +163,71 @@ func SearchJournalPaper(c *gin.Context) {
 	}
 	c.IndentedJSON(http.StatusOK, ret)
 }
+
+//OpenPaper
+
+type OpenPaperInfo struct {
+	PaperId     string `json:"paperId"`
+	PaperTitle  string `json:"title"`
+	PaperAuthor string `json:"author"`
+	PublishDate string `json:"publicDate"`
+	Link        string `json:"link"`
+}
+
+type OpenPaperRet struct {
+	Success bool            `json:"success"`
+	Data    []OpenPaperInfo `json:"data"`
+	Total   int
+}
+
+func GetOpenPaper(c *gin.Context) {
+	curPage, _ := strconv.Atoi(c.Query("curPage"))
+
+	if curPage < 1 {
+		curPage = 1
+	}
+
+	claim, err := VertifyToken(c)
+	if err != nil {
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		return
+	}
+
+	authName := claim.Name
+	authPass := claim.Password
+
+	_, err = Database.GetUserProperty(Database.User{Username: authName, Password: authPass})
+	if err != nil {
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		return
+	}
+
+	result, err := Database.GetOpenPaper()
+	if err != nil {
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		return
+	}
+
+	data := []OpenPaperInfo{}
+	for _, value := range result {
+		paperData := OpenPaperInfo{
+			PaperId:     value[0],
+			PaperTitle:  value[1],
+			PaperAuthor: value[2],
+			PublishDate: value[3],
+			Link:        value[4],
+		}
+		data = append(data, paperData)
+	}
+
+	ret := OpenPaperRet{
+		Success: true,
+		Total:   len(data)}
+
+	if curPage*10 > len(data) {
+		ret.Data = data[(curPage-1)*10:]
+	} else {
+		ret.Data = data[(curPage-1)*10 : curPage*10]
+	}
+	c.IndentedJSON(http.StatusOK, ret)
+}
