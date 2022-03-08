@@ -22,6 +22,7 @@ type BorrowInfo struct {
 
 type BorrowInfoRet struct {
 	Success bool         `json:"success"`
+	Total   int          `json:"total"`
 	Data    []BorrowInfo `json:"data"`
 }
 
@@ -108,7 +109,7 @@ func Borrowing(c *gin.Context) {
 	} else {
 		result = data[(curPage-1)*10 : curPage*10]
 	}
-	c.IndentedJSON(http.StatusOK, BorrowInfoRet{Success: true, Data: result})
+	c.IndentedJSON(http.StatusOK, BorrowInfoRet{Success: true, Data: result, Total: len(data)})
 
 }
 
@@ -151,5 +152,5 @@ func Borrowed(c *gin.Context) {
 	} else {
 		result = data[(curPage-1)*10 : curPage*10]
 	}
-	c.IndentedJSON(http.StatusOK, BorrowInfoRet{Success: true, Data: result})
+	c.IndentedJSON(http.StatusOK, BorrowInfoRet{Success: true, Data: result, Total: len(data)})
 }

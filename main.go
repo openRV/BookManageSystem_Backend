@@ -4,6 +4,7 @@ import (
 	"bookms/Interface"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func main() {
@@ -27,6 +28,11 @@ func main() {
 	router.DELETE("/faculty/delpaper", Interface.DeletePaper)
 	router.GET("/users/conference", Interface.SearchConferencePaper)
 	router.GET("/users/journal", Interface.SearchJournalPaper)
+
+	router.GET("/test", func(c *gin.Context) {
+		c.IndentedJSON(http.StatusOK, "Test OK")
+	})
+
 	err := router.Run("localhost:8080")
 	if err != nil {
 		fmt.Println(err)
