@@ -119,7 +119,7 @@ func SearchBook(c *gin.Context) {
 						isBorrowed = true
 					}
 				}
-				copy := Copy{CopyID: copyID, LibName: value[2], LibLocation: value[3], Checkout: isBorrowed}
+				copy := Copy{CopyID: copyID, LibName: value[2], LibLocation: value[3], Checkout: !isBorrowed}
 				bookData.Copy = append(bookData.Copy, copy)
 			}
 			data = append(data, bookData)

@@ -89,14 +89,14 @@ func Return(book Book, user User) error {
 	}
 	defer db.Close()
 
-	borrowing, err := GetBorrowingBy(user)
-	if err != nil {
-		return err
-	}
+	//borrowing, err := GetBorrowingBy(user)
+	//if err != nil {
+	//	return err
+	//}
 
-	if len(borrowing) != 0 {
-		return errors.New("have unreturned books, please return books first")
-	}
+	//if len(borrowing) != 0 {
+	//	return errors.New("have unreturned books, please return books first")
+	//}
 
 	stmt, err := db.Prepare("DELETE FROM Borrow WHERE bookid=$1 AND username=$2 AND userpassword=$3")
 	if err != nil {
@@ -104,7 +104,7 @@ func Return(book Book, user User) error {
 		return err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(book.ID)
+	_, err = stmt.Exec(book.ID, user.Username, user.Password)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -171,7 +171,7 @@ func GetBorrowingBy(user User) ([]BorrowInfo, error) {
 			return nil, err
 		}
 		bookid, _ := strconv.Atoi(str1)
-		err := db.QueryRow("SELECT * FROM Books WHERE bookid=$1", bookid).Scan(nil, &str2, nil, &str3, nil, &str4, nil)
+		err := db.QueryRow("SELECT * FROM Book WHERE bookid=$1", bookid).Scan(&str1, &str2, &str1, &str3, &str1, &str4, &str1)
 		if err != nil {
 			return nil, err
 		}
@@ -213,7 +213,7 @@ func GetBorrowedBy(user User) ([]BorrowInfo, error) {
 			return nil, err
 		}
 		bookid, _ := strconv.Atoi(str1)
-		err := db.QueryRow("SELECT * FROM Books WHERE bookid=$1", bookid).Scan(nil, &str2, nil, &str3, nil, &str4, nil)
+		err := db.QueryRow("SELECT * FROM Book WHERE bookid=$1", bookid).Scan(nil, &str2, nil, &str3, nil, &str4, nil)
 		if err != nil {
 			return nil, err
 		}

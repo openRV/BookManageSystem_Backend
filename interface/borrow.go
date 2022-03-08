@@ -17,7 +17,7 @@ type BorrowInfo struct {
 	Author     string `json:"author"`
 	Publisher  string `json:"publisher"`
 	BorrowDate string `json:"borrowDate"`
-	ReturnDate string `json:"return Date"`
+	ReturnDate string `json:"returnDate"`
 }
 
 type BorrowInfoRet struct {
