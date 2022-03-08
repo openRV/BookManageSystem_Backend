@@ -2,6 +2,7 @@ package Database
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	_ "github.com/lib/pq"
@@ -126,13 +127,21 @@ func DeleteUser(user User) error {
 	}
 	defer db.Close()
 
+	borrowInfo, err := GetBorrowingBy(user)
+	if err != nil {
+		return err
+	}
+	if len(borrowInfo) != 0 {
+		return errors.New("has unreturned books")
+	}
+
 	stmt, err := db.Prepare("DELETE FROM \"Users\" WHERE username=$1 AND password=$2")
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 	defer stmt.Close()
-	_,err = stmt.Exec(user.Username, user.Password)
+	_, err = stmt.Exec(user.Username, user.Password)
 	if err != nil {
 		fmt.Println(err)
 		return err
