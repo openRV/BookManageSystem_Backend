@@ -14,7 +14,7 @@ type UserToken struct {
 }
 
 type UserRet struct {
-	Success string    `json:"success"`
+	Success bool      `json:"success"`
 	Data    UserToken `json:"data"`
 }
 
@@ -29,7 +29,7 @@ func PostUser(c *gin.Context) {
 	token := GetToken(json)
 	user, err := Database.SearchUser(Database.User{Username: username, Password: password})
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
@@ -42,6 +42,6 @@ func PostUser(c *gin.Context) {
 		str = "ADM"
 	}
 
-	c.IndentedJSON(http.StatusOK, UserRet{Success: "true", Data: UserToken{Token: token, Role: str}})
+	c.IndentedJSON(http.StatusOK, UserRet{Success: true, Data: UserToken{Token: token, Role: str}})
 
 }

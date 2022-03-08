@@ -63,7 +63,7 @@ func GetUsers(c *gin.Context) {
 
 	claim, err := VertifyToken(c)
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
@@ -72,17 +72,17 @@ func GetUsers(c *gin.Context) {
 
 	property, err := Database.GetUserProperty(Database.User{Username: authName, Password: authPass})
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
 	if property == Database.Student {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	} else if property == Database.Staff {
 		rows, err := Database.GetAllUsers()
 		if err != nil {
-			c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+			c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 			return
 		}
 
@@ -107,7 +107,7 @@ func GetUsers(c *gin.Context) {
 	} else if property == Database.Faculty {
 		rows, err := Database.GetAllUsers()
 		if err != nil {
-			c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+			c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 			return
 		}
 		data := []UserData{}
@@ -128,7 +128,7 @@ func GetUsers(c *gin.Context) {
 		c.IndentedJSON(http.StatusOK, UsersRet{Success: true, Data: result, Total: len(data)})
 		return
 	} else {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: "error: no Property found"})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: "error: no Property found"})
 		return
 	}
 
@@ -138,7 +138,7 @@ func DeleteUser(c *gin.Context) {
 
 	claim, err := VertifyToken(c)
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
@@ -150,34 +150,34 @@ func DeleteUser(c *gin.Context) {
 
 	property, err := Database.GetUserProperty(Database.User{Username: authName, Password: authPass})
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
 	user, err := Database.SearchUser(Database.User{Username: username, Password: password})
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
 	if property == Database.Student {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: "your Property is Student, can't delete users"})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: "your Property is Student, can't delete users"})
 		return
 	} else if property == Database.Staff {
 		if user.Property == Database.Student {
 			err = Database.DeleteUser(Database.User{Username: username, Password: password})
 			if err != nil {
-				c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+				c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 				return
 			}
 		} else {
-			c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: "your Property is Stuff, can only delete Student users"})
+			c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: "your Property is Stuff, can only delete Student users"})
 			return
 		}
 	} else if property == Database.Faculty {
 		err = Database.DeleteUser(Database.User{Username: username, Password: password})
 		if err != nil {
-			c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+			c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 			return
 		}
 	}

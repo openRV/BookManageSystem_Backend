@@ -22,7 +22,7 @@ func RegisterUser(c *gin.Context) {
 
 	err := Database.RegisterUser(Database.User{Username: username, Password: password, Address: userAddress, Phone: userPhone, Property: Database.Student})
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 

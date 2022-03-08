@@ -28,7 +28,7 @@ func SearchDownH(c *gin.Context) {
 
 	claim, err := VertifyToken(c)
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
@@ -37,7 +37,7 @@ func SearchDownH(c *gin.Context) {
 
 	history, err := Database.SearchDownload(authName, authPass)
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 

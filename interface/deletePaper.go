@@ -15,7 +15,7 @@ func DeletePaper(c *gin.Context) {
 
 	claim, err := VertifyToken(c)
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
@@ -24,18 +24,18 @@ func DeletePaper(c *gin.Context) {
 
 	property, err := Database.GetUserProperty(Database.User{Username: authName, Password: authPass})
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
 	if property == Database.Student {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: "your property is student, not able to delete book"})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: "your property is student, not able to delete book"})
 		return
 	}
 
 	err = Database.DeletePaper(paperid)
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 }

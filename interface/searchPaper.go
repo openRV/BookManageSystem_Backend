@@ -38,7 +38,7 @@ func SearchConferencePaper(c *gin.Context) {
 
 	claim, err := VertifyToken(c)
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
@@ -47,13 +47,13 @@ func SearchConferencePaper(c *gin.Context) {
 
 	_, err = Database.GetUserProperty(Database.User{Username: authName, Password: authPass})
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
 	result, err := Database.SearchConferencePaper(title, author, ConferenceTitle, ProceedingEditor)
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
@@ -117,7 +117,7 @@ func SearchJournalPaper(c *gin.Context) {
 
 	claim, err := VertifyToken(c)
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
@@ -126,13 +126,13 @@ func SearchJournalPaper(c *gin.Context) {
 
 	_, err = Database.GetUserProperty(Database.User{Username: authName, Password: authPass})
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
 	result, err := Database.SearchJournalPaper(title, author, JournalTitle, scope, VolumeNum, VolumeEditor)
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
@@ -189,7 +189,7 @@ func GetOpenPaper(c *gin.Context) {
 
 	claim, err := VertifyToken(c)
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
@@ -198,13 +198,13 @@ func GetOpenPaper(c *gin.Context) {
 
 	_, err = Database.GetUserProperty(Database.User{Username: authName, Password: authPass})
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
 	result, err := Database.GetOpenPaper()
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 

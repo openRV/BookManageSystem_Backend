@@ -22,7 +22,7 @@ func GetAccount(c *gin.Context) {
 
 	claim, err := VertifyToken(c)
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
@@ -31,7 +31,7 @@ func GetAccount(c *gin.Context) {
 
 	User, err := Database.SearchUser(Database.User{Username: username, Password: password})
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 	data := accountData{UserName: User.Username, Password: User.Password, UserAddress: User.Address, UserPhone: User.Phone}
@@ -41,7 +41,7 @@ func GetAccount(c *gin.Context) {
 func ModifyAccount(c *gin.Context) {
 	claim, err := VertifyToken(c)
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
@@ -56,13 +56,13 @@ func ModifyAccount(c *gin.Context) {
 	password := claim.Password
 
 	if changePassword == "true" && oldPassword != password {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: "old password dismatch"})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: "old password dismatch"})
 		return
 	}
 	err = Database.DeleteUser(Database.User{Username: username, Password: password})
 
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
@@ -73,7 +73,7 @@ func ModifyAccount(c *gin.Context) {
 
 	err = Database.RegisterUser(Database.User{Username: userName, Address: userAddress, Phone: userPhone, Password: finalPassword, Property: Database.Student})
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 	c.IndentedJSON(http.StatusOK, AccountRet{Success: true, Data: accountData{UserName: userName, UserAddress: userAddress, UserPhone: userPhone, Password: finalPassword}})

@@ -69,7 +69,7 @@ func SearchBook(c *gin.Context) {
 
 	claim, err := VertifyToken(c)
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
@@ -78,13 +78,13 @@ func SearchBook(c *gin.Context) {
 
 	_, err = Database.GetUserProperty(Database.User{Username: authName, Password: authPass})
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
 	allBooks, err := Database.GetAllBook()
 	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		return
 	}
 
@@ -103,7 +103,7 @@ func SearchBook(c *gin.Context) {
 		if bookfilter(bookData, filterTemplate) {
 			copies, err := Database.GetAllCopy(Database.Book{ID: bookData.Bookid})
 			if err != nil {
-				c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+				c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 				return
 			}
 			for _, value := range copies {
@@ -111,7 +111,7 @@ func SearchBook(c *gin.Context) {
 				isBorrowed := false
 				borrowed, err := Database.GetBorrowed(Database.Book{ID: bookData.Bookid})
 				if err != nil {
-					c.IndentedJSON(http.StatusOK, ErrorRes{Success: "false", Msg: err.Error()})
+					c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 					return
 				}
 				for _, value := range borrowed {
