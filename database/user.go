@@ -135,7 +135,7 @@ func DeleteUser(user User) error {
 		return errors.New("has unreturned books")
 	}
 
-	stmt, err := db.Prepare("DELETE FROM \"Users\" WHERE username=$1 AND password=$2")
+	stmt, err := db.Prepare("DELETE FROM \"Users\" WHERE username = $1 AND password = $2")
 	if err != nil {
 		fmt.Println(err)
 		return err

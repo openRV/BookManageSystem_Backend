@@ -7,14 +7,14 @@ import (
 )
 
 type accountData struct {
-	UserName    string `json"userName"`
+	UserName    string `json:"userName"`
 	Password    string `json:"password"`
-	UserAddress string `json:"userAddres"`
+	UserAddress string `json:"userAddress"`
 	UserPhone   string `json:"userPhone"`
 }
 
 type AccountRet struct {
-	Success bool        `jsn:"success"`
+	Success bool        `json:"success"`
 	Data    accountData `json:"data"`
 }
 
