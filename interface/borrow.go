@@ -89,6 +89,7 @@ func ReturnBook(c *gin.Context) {
 
 func Borrowing(c *gin.Context) {
 	curPage, _ := strconv.Atoi(c.Query("curPage"))
+	pageSize, _ := strconv.Atoi(c.Query("pageSize"))
 	if curPage < 1 {
 		curPage = 1
 	}
@@ -122,10 +123,10 @@ func Borrowing(c *gin.Context) {
 	}
 
 	var result []BorrowInfo
-	if curPage*10 > len(data) {
-		result = data[(curPage-1)*10:]
+	if curPage*pageSize > len(data) {
+		result = data[(curPage-1)*pageSize:]
 	} else {
-		result = data[(curPage-1)*10 : curPage*10]
+		result = data[(curPage-1)*pageSize : curPage*pageSize]
 	}
 	c.IndentedJSON(http.StatusOK, BorrowInfoRet{Success: true, Data: result, Total: len(data)})
 
@@ -134,6 +135,7 @@ func Borrowing(c *gin.Context) {
 func Borrowed(c *gin.Context) {
 
 	curPage, _ := strconv.Atoi(c.Query("curPage"))
+	pageSize, _ := strconv.Atoi(c.Query("pageSize"))
 	if curPage < 1 {
 		curPage = 1
 	}
@@ -173,10 +175,10 @@ func Borrowed(c *gin.Context) {
 	}
 
 	var result []BorrowInfo
-	if curPage*10 > len(revdata) {
-		result = revdata[(curPage-1)*10:]
+	if curPage*pageSize > len(revdata) {
+		result = revdata[(curPage-1)*pageSize:]
 	} else {
-		result = revdata[(curPage-1)*10 : curPage*10]
+		result = revdata[(curPage-1)*pageSize : curPage*pageSize]
 	}
 	c.IndentedJSON(http.StatusOK, BorrowInfoRet{Success: true, Data: result, Total: len(revdata)})
 }

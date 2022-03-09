@@ -58,6 +58,7 @@ func bookfilter(searchBook BookData, filterBook BookData) bool {
 
 func SearchBook(c *gin.Context) {
 	curPage, _ := strconv.Atoi(c.Query("curPage"))
+	pageSize, _ := strconv.Atoi(c.Query("pageSize"))
 	title := c.Query("title")
 	author := c.Query("author")
 	publisher := c.Query("publisher")
@@ -135,10 +136,10 @@ func SearchBook(c *gin.Context) {
 
 	ret := BooksRet{Success: true, Total: len(data)}
 
-	if curPage*10 > len(data) {
-		ret.Data = data[(curPage-1)*10:]
+	if curPage*pageSize > len(data) {
+		ret.Data = data[(curPage-1)*pageSize:]
 	} else {
-		ret.Data = data[(curPage-1)*10 : curPage*10]
+		ret.Data = data[(curPage-1)*pageSize : curPage*pageSize]
 	}
 	c.IndentedJSON(http.StatusOK, ret)
 
