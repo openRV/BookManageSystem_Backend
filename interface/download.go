@@ -71,7 +71,7 @@ func HandleUploadMutiFile(c *gin.Context) {
 func HandleDownloadFile(c *gin.Context) {
 
 	paperid := c.Query("paperId")
-	fmt.Println("PaperId: " + paperid)
+	//fmt.Println("PaperId: " + paperid)
 	result, err := Database.SearchPaper(paperid, "")
 	if err != nil {
 		fmt.Println(err)
@@ -81,8 +81,8 @@ func HandleDownloadFile(c *gin.Context) {
 	content := "hello world, 我是一个文件，" + result[0][6]
 
 	c.Writer.WriteHeader(http.StatusOK)
-	c.Header("Content-Disposition", "attachment; filename=hello.pdf")
-	c.Header("Content-Type", "application/text/plain")
+	c.Header("Content-Disposition", "attachment; filename="+result[0][2]+".pdf")
+	c.Header("Content-Type", "application/pdf")
 	c.Header("Accept-Length", fmt.Sprintf("%d", len(content)))
 	c.Writer.Write([]byte(content))
 }
