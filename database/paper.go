@@ -306,6 +306,10 @@ func DeletePaper(PaperId string) error {
 	if result.ConferenceId != " " {
 		var test1 bool
 		test1, err = SearchPaper1(result.ConferenceId)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
 		if !test1 {
 			DeleteConference(result.ConferenceId)
 		}
@@ -314,11 +318,19 @@ func DeletePaper(PaperId string) error {
 	if result.JournalId != " " && result.VolumnId != " " {
 		var test2 bool
 		test2, err = SearchPaper2(result.JournalId, result.VolumnId)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
 		if !test2 {
 			DeleteVolumn(result.JournalId, result.VolumnId)
 			//某期刊是否空
 			var test3 bool
 			test3, err = SearchPaper3(result.JournalId)
+			if err != nil {
+				fmt.Println(err)
+				return err
+			}
 			if !test3 {
 				DeleteJournal(result.JournalId)
 			}
