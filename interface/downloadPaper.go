@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -72,7 +73,32 @@ func HandleDownloadFile(c *gin.Context) {
 
 	paperid := c.Query("paperId")
 	//fmt.Println("PaperId: " + paperid)
+
+	claim, err := VertifyToken(c)
+	if err != nil {
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
+		return
+	}
+
+	authName := claim.Name
+	authPass := claim.Password
+
 	result, err := Database.SearchPaper(paperid, "")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	info := DownloadInfo{
+		Username:     authName,
+		Userpassword: authPass,
+		Paperid:      paperid,
+		PaperTitle:   result[0][2],
+		Paperauthor:  result[0][1],
+		Downloaddate: time.Now()}
+
+	err = Database.InsertDownload(info)
 	if err != nil {
 		fmt.Println(err)
 		return
