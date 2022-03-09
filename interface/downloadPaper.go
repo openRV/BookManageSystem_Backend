@@ -1,13 +1,12 @@
 package Interface
 
 import (
-	"bookms/Database"
+	Database "bookms/Database"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 // some
@@ -72,7 +71,7 @@ func HandleUploadMutiFile(c *gin.Context) {
 func HandleDownloadFile(c *gin.Context) {
 
 	paperid := c.Query("paperId")
-	//fmt.Println("PaperId: " + paperid)
+	fmt.Println("PaperId: " + paperid)
 
 	claim, err := VertifyToken(c)
 	if err != nil {
@@ -103,7 +102,7 @@ func HandleDownloadFile(c *gin.Context) {
 		return
 	}
 
-	content := "hello world, 我是一个文件，" + result[0][6]
+	content := []byte(result[0][6])
 
 	c.Writer.WriteHeader(http.StatusOK)
 	c.Header("Content-Disposition", "attachment; filename="+result[0][2]+".pdf")
