@@ -61,7 +61,7 @@ func InsertDownload(info DownloadInfo) error {
 	}
 	defer db.Close()
 
-	stmt, err := db.Prepare("INSERT INTO Downloadhistory (username,userpassword,paperid,papertitle,paperauthor,downloaddate) VALUES ($1,$2,$3,$4,$6,$7)")
+	stmt, err := db.Prepare("INSERT INTO Downloadhistory (username,userpassword,paperid,papertitle,paperauthor,downloaddate) VALUES ($1,$2,$3,$4,$5,$6)")
 	if err != nil {
 		fmt.Println(err)
 		return err
