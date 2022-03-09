@@ -16,7 +16,7 @@ func AddPaper(c *gin.Context) {
 	//文件读取
 	read, err := c.FormFile("file")
 	reader, _ := read.Open()
-	file := make([]byte, 10)
+	file := make([]byte, 25)
 	_, err = reader.Read(file)
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
@@ -63,21 +63,41 @@ func AddPaper(c *gin.Context) {
 
 		var test2 bool
 		test2, err = Database.SearchPaper2(JournalId, VolumnNum)
+		if err != nil {
+			c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+			fmt.Println(err)
+			return
+		}
 		if !test2 {
-			Database.InsertVolumn(Database.VolumnData{
+			err = Database.InsertVolumn(Database.VolumnData{
 				JournalId,
 				VolumnNum,
 				VolumnEditor,
 				publishDate})
+			if err != nil {
+				c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+				fmt.Println(err)
+				return
+			}
 			//某期刊是否空
 			var test3 bool
 			test3, err = Database.SearchPaper3(JournalId)
+			if err != nil {
+				c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+				fmt.Println(err)
+				return
+			}
 			if !test3 {
-				Database.InsertJournal(Database.JournalData{
+				err = Database.InsertJournal(Database.JournalData{
 					JournalId,
 					JournalTitle,
 					JournalEditor,
 					scope})
+				if err != nil {
+					c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+					fmt.Println(err)
+					return
+				}
 			}
 		}
 
@@ -110,6 +130,11 @@ func AddPaper(c *gin.Context) {
 		//检查相关论文是否存在
 		var test1 bool
 		test1, err = Database.SearchPaper1(ConferenceId)
+		if err != nil {
+			c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+			fmt.Println(err)
+			return
+		}
 		if !test1 {
 			Database.InsertConference(Database.ConferenceData{
 				ConferenceId,
@@ -117,6 +142,11 @@ func AddPaper(c *gin.Context) {
 				ProceedingEditor,
 				publishDate,
 				publishAddress})
+			if err != nil {
+				c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+				fmt.Println(err)
+				return
+			}
 		}
 
 		data := Database.PaperData{
