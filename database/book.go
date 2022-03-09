@@ -100,7 +100,19 @@ func DelBook(book Book) error {
 	}
 	defer db.Close()
 
-	stmt, err := db.Prepare("DELETE FROM Book WHERE bookid=$1")
+	stmt, err := db.Prepare("DELETE FROM Borrow WHERE bookid=$1")
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(book.ID)
+
+	stmt, err = db.Prepare("DELETE FROM Borrowhistory WHERE bookid=$1")
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(book.ID)
+
+	stmt, err = db.Prepare("DELETE FROM Book WHERE bookid=$1")
 	if err != nil {
 		fmt.Println(err)
 		return err
