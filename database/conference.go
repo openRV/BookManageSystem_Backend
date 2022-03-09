@@ -15,6 +15,8 @@ type ConferenceData struct {
 }
 
 func SearchConference1(conferenceId string) (string, error) {
+	fmt.Println("Get Conference Open Paper publish date...")
+	fmt.Println("ConferenceId: " + conferenceId)
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -28,12 +30,15 @@ func SearchConference1(conferenceId string) (string, error) {
 		fmt.Println(err)
 		return "", err
 	}
-
+	fmt.Println("Get open paper publish date successfully!")
 	return result, nil
 }
 
 func SearchConference(conferenceTitle string, proceedingEditor string) ([][5]string, error) {
-	fmt.Println("geting all conference")
+
+	fmt.Println("Search conference...")
+	fmt.Println("ConferenceTitle: " + conferenceTitle)
+	fmt.Println("ProceedEditor: " + proceedingEditor)
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -60,11 +65,17 @@ func SearchConference(conferenceTitle string, proceedingEditor string) ([][5]str
 			result = append(result, [5]string{str1, str2, str3, str4, str5})
 		}
 	}
-
+	fmt.Println("Get Conference Successfully!")
 	return result, nil
 }
 
 func InsertConference(data ConferenceData) error {
+	fmt.Println("Insert into Conference...")
+	fmt.Println("ConferenceId: " + data.ConferenceId)
+	fmt.Println("ConferenceTitle: " + data.ConferenceTitle)
+	fmt.Println("ProceedingEditor: " + data.ProceedingEditor)
+	fmt.Println("PublishDate: " + data.PublishDate)
+	fmt.Println("PublishAddress: " + data.PublishAddress)
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -90,12 +101,13 @@ func InsertConference(data ConferenceData) error {
 		return err
 	}
 
-	fmt.Println("Insert success!")
+	fmt.Println("Insert Conference successfully!")
 
 	return nil
 }
 func DeleteConference(conferenceId string) error {
-	//fmt.Println("Deletinging: username:", user.Username, " password:", user.Password)
+	fmt.Println("Deletinging a conference...")
+	fmt.Println("ConferenceId: ", conferenceId)
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -114,6 +126,6 @@ func DeleteConference(conferenceId string) error {
 		fmt.Println(err)
 		return err
 	}
-	fmt.Println("Delete success")
+	fmt.Println("Delete conference success")
 	return nil
 }

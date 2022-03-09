@@ -17,6 +17,7 @@ type DownloadInfo struct {
 func SearchDownload(Username string, Userpassword string) ([][4]string, error) {
 
 	fmt.Println("Getting download history...")
+	fmt.Println("Username: " + Username + "\n" + "Userpassword: " + Userpassword + "\n")
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -42,12 +43,17 @@ func SearchDownload(Username string, Userpassword string) ([][4]string, error) {
 
 	}
 
-	fmt.Println("Successfully get!")
+	fmt.Println("Successfully get download history!")
 	return result, nil
 }
 
 func InsertDownload(info DownloadInfo) error {
 	fmt.Println("Insert a download history...")
+	fmt.Println("Username: " + info.Username + "\n" + "UserPassword: " + info.Userpassword)
+	fmt.Println("PaperId: " + info.Paperid)
+	fmt.Println("PaperTtiel: " + info.Papertitle)
+	fmt.Println("PaperAuthor:" + info.Paperauthor)
+	fmt.Println("Downloaddate: " + info.Downloaddate)
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -74,7 +80,7 @@ func InsertDownload(info DownloadInfo) error {
 		return err
 	}
 
-	fmt.Println("Insert success!")
+	fmt.Println("Insert download history successfully!")
 
 	return nil
 }

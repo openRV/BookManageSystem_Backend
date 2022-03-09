@@ -14,6 +14,9 @@ type VolumnData struct {
 }
 
 func SearchVolumn1(journalId string, volumnId string) (string, error) {
+	fmt.Println("Get journal paper's publication date...")
+	fmt.Println("JournalId: " + journalId)
+	fmt.Println(("VolumnId: " + volumnId))
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -28,10 +31,14 @@ func SearchVolumn1(journalId string, volumnId string) (string, error) {
 		return "", err
 	}
 
+	fmt.Println("Get journal paper's publication date successfully!")
+
 	return result, nil
 }
 func SearchVolumn(volumnId string, volumnEditor string) ([][4]string, error) {
 	fmt.Println("getting Volumn...")
+	fmt.Println("VolumnId: " + volumnId)
+	fmt.Println("volumnEditor+ " + volumnEditor)
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -65,6 +72,7 @@ func SearchVolumn(volumnId string, volumnEditor string) ([][4]string, error) {
 
 func InsertVolumn(data VolumnData) error {
 	fmt.Println("Inserting a volumn...")
+	fmt.Println("JournalId: " + data.JournalId + "\n" + "VolumnId: " + data.VolumnId + "\n" + "VolumnEditor: " + data.Volumneditior + "\n" + "PublicationDate: " + data.PublicationDate + "\n")
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -89,13 +97,14 @@ func InsertVolumn(data VolumnData) error {
 		return err
 	}
 
-	fmt.Println("Insert success!")
+	fmt.Println("Insert volumn success!")
 
 	return nil
 }
 
 func DeleteVolumn(journalid string, volumnid string) error {
 	fmt.Println("Deleting a volumn...")
+	fmt.Println("JournalId: " + journalid + "\n" + "VolumnId: " + volumnid + "\n")
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -114,7 +123,7 @@ func DeleteVolumn(journalid string, volumnid string) error {
 		fmt.Println(err)
 		return err
 	}
-	fmt.Println("Delete success")
+	fmt.Println("Delete volumn success")
 	return nil
 
 }

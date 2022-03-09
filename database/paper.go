@@ -18,7 +18,7 @@ type PaperData struct {
 }
 
 func GetOpenPaper() ([][5]string, error) {
-
+	fmt.Println("Get Open Paper...")
 	var result [][5]string
 	temp, err := SearchPaper("", "")
 	if err != nil {
@@ -46,12 +46,14 @@ func GetOpenPaper() ([][5]string, error) {
 			}
 		}
 	}
+
+	fmt.Println("Get OpenPaper successfully!")
 	return result, nil
 
 }
 
 func SearchPaper1(Conferenceid string) (bool, error) {
-	fmt.Println("Verify whether are more papers in same Conference...")
+	fmt.Println("Verify whether are more papers in the same Conference...")
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -65,13 +67,12 @@ func SearchPaper1(Conferenceid string) (bool, error) {
 		fmt.Println(err)
 		return false, err
 	}
-
 	return true, nil
 
 }
 
 func SearchPaper2(Journalid string, Volumnid string) (bool, error) {
-	fmt.Println("Examing whether there are more papers in same JournalColumn...")
+	fmt.Println("Examing whether there are more papers in the same JournalColumn...")
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -91,7 +92,7 @@ func SearchPaper2(Journalid string, Volumnid string) (bool, error) {
 }
 
 func SearchPaper3(Journalid string) (bool, error) {
-	fmt.Println("Examing whether there are more papers in same Journal...")
+	fmt.Println("Examing whether there are more papers in the same Journal...")
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -112,6 +113,8 @@ func SearchPaper3(Journalid string) (bool, error) {
 
 func SearchPaper(PaperTitle string, PaperAuthor string) ([][8]string, error) {
 	fmt.Println("getting papers...")
+	fmt.Println("PaperTitle: " + PaperTitle)
+	fmt.Println("PaperAuthor: " + PaperAuthor)
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -140,12 +143,16 @@ func SearchPaper(PaperTitle string, PaperAuthor string) ([][8]string, error) {
 		}
 	}
 
-	fmt.Println("Successfully get!")
+	fmt.Println("Successfully get all papers!")
 	return result, nil
 }
 
 func SearchConferencePaper(PaperTitle string, PaperAuthor string, ConferenceTitle string, ProceedingEditor string) ([][7]string, error) {
 	fmt.Println("Getting papers from certain Conference...")
+	fmt.Println("PaperTitle: " + PaperTitle)
+	fmt.Println("PaperAuthor: " + PaperAuthor)
+	fmt.Println("ConferenceTitle: " + ConferenceTitle)
+	fmt.Println("ProceedingEditor: " + ProceedingEditor)
 	var result [][7]string
 	conference, err := SearchConference(ConferenceTitle, ProceedingEditor)
 	if err != nil {
@@ -164,12 +171,18 @@ func SearchConferencePaper(PaperTitle string, PaperAuthor string, ConferenceTitl
 		}
 	}
 
-	fmt.Println("Successfull get!")
+	fmt.Println("Successfull get conference papers!")
 	return result, nil
 }
 
 func SearchJournalPaper(PaperTitle string, PaperAuthor string, JournalTitle string, JournalScope string, VolumnNum string, VolumnEditor string) ([][9]string, error) {
 	fmt.Println("Getting papers from sertain Journal Volumn...")
+	fmt.Println("PaperTitle: " + PaperTitle)
+	fmt.Println("PaperAuthor: " + PaperAuthor)
+	fmt.Println("JournalTitle: " + JournalTitle)
+	fmt.Println("JournalScope: " + JournalScope)
+	fmt.Println("VolumnNum: " + VolumnNum)
+	fmt.Println("VolumnEditor: " + VolumnEditor)
 	var result [][9]string
 	paper, err := SearchPaper(PaperTitle, PaperAuthor)
 	if err != nil {
@@ -199,7 +212,7 @@ func SearchJournalPaper(PaperTitle string, PaperAuthor string, JournalTitle stri
 			}
 		}
 	}
-	fmt.Println("Successfully get!")
+	fmt.Println("Successfully get journal papers!")
 	return result, nil
 }
 
@@ -244,6 +257,7 @@ func InsertPaper(data PaperData) error {
 
 func DeletePaper(PaperId string) error {
 	fmt.Println("Deleting a paper...")
+	fmt.Println("PaperId: " + PaperId)
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -293,6 +307,6 @@ func DeletePaper(PaperId string) error {
 		}
 	}
 
-	fmt.Println("Delete success")
+	fmt.Println("Delete paper successfully")
 	return nil
 }
