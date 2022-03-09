@@ -17,7 +17,7 @@ type ConferencePaperData struct {
 	PublishDate      string `json:"publicDate"`
 	PublishAddress   string `json:"publicAddress"`
 	ConferenceTitle  string `json:"ConferenceTitle"`
-	ProceedingEditor string `json:"proceedingEditor"`
+	ProceedingEditor string `json:"ProceedingEditor"`
 }
 
 type ConferencePaperRet struct {
@@ -93,7 +93,7 @@ type JournalPaperDate struct {
 	PaperTitle    string `json:"title"`
 	PaperAuthor   string `json:"author"`
 	PublishDate   string `json:"publicationDate"`
-	Scope         string `json:"scopr"`
+	Scope         string `json:"scope"`
 	JournalTitle  string `json:"JournalTtile"`
 	JournalEditor string `json:"JournalEditor"`
 	VolumnNum     string `json:"VolumeNum"`
