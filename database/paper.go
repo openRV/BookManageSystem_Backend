@@ -219,41 +219,46 @@ func SearchJournalPaper(PaperTitle string, PaperAuthor string, JournalTitle stri
 
 //TODO: To complete
 func InsertPaper(data PaperData) error {
-	/*
-		db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
-		if err != nil {
-			fmt.Println(err)
-			return err
-		}
-		defer db.Close()
+	fmt.Println("Inserting a paepr...")
+	fmt.Println("PaperId: " + data.PaperId)
+	fmt.Println("Author: " + data.Author)
+	fmt.Println("PaperTitle: " + data.PaperTitle)
+	fmt.Println("JournalId: " + data.JournalId)
+	fmt.Println("VolumnId:" + data.VolumnId)
+	fmt.Println("ConferenceId: " + data.ConferenceId)
+	//fmt.Println("Link: "+ data.Link)
+	fmt.Println("IsOpen: " + data.IsOpen)
+	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer db.Close()
 
-		//针对相关Journal Volumn/Conference做处理
+	stmt, err := db.Prepare("INSERT INTO Paper (paperid,author,papertitle,journalid,volumnid,conferenceid,link,isopen) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer stmt.Close()
 
-		//检测某会议是否空
-		if data.ConferenceId != "" {
-			var test1 bool
-			test1, err = SearchPaper1(data.ConferenceId)
-			if !test1 {
-				InsertConference(result.ConferenceId)
-			}
-		}
-		//检测期刊的某册是否空
-		if result.JournalId != "" && result.VolumnId != "" {
-			var test2 bool
-			test2, err = SearchPaper2(result.JournalId, result.VolumnId)
-			if !test2 {
-				DeleteVolumn(result.JournalId, result.VolumnId)
-				//某期刊是否空
-				var test3 bool
-				test3, err = SearchPaper3(result.JournalId)
-				if !test3 {
-					DeleteJournal(result.JournalId)
-				}
-			}
-		}*/
-	var err error
-	return err
+	_, err = stmt.Exec(
+		data.PaperId,
+		data.Author,
+		data.PaperTitle,
+		data.JournalId,
+		data.VolumnId,
+		data.ConferenceId,
+		data.Link,
+		data.IsOpen)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
 
+	fmt.Println("Insert Paper success!")
+
+	return nil
 }
 
 func DeletePaper(PaperId string) error {
