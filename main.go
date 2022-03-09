@@ -37,6 +37,7 @@ func main() {
 	router.GET("/users/journal", Interface.SearchJournalPaper)
 	router.GET("openPapers", Interface.GetOpenPaper)
 	router.GET("/users/download", Interface.SearchDownH)
+	router.GET("/users/downloadPaper", Interface.HandleDownloadFile)
 
 	router.GET("/test", func(c *gin.Context) {
 		c.IndentedJSON(http.StatusOK, "Test OK")
