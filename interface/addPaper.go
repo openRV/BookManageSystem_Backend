@@ -1,7 +1,7 @@
 package Interface
 
 import (
-	Database "bookms/database"
+	Database "bookms/Database"
 	"crypto/sha256"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -16,7 +16,7 @@ func AddPaper(c *gin.Context) {
 	//文件读取
 	read, err := c.FormFile("file")
 	reader, _ := read.Open()
-	file := make([]byte, 32)
+	file := make([]byte, 10)
 	_, err = reader.Read(file)
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
@@ -61,6 +61,26 @@ func AddPaper(c *gin.Context) {
 		JournalId := fmt.Sprintf("%x", sha256.Sum256([]byte(JournalTitle+JournalEditor+scope)))
 		PaperId := fmt.Sprintf("%x", sha256.Sum256([]byte(PaperAuthor+PaperTitle+publishDate+VolumnNum+VolumnEditor)))
 
+		var test2 bool
+		test2, err = Database.SearchPaper2(JournalId, VolumnNum)
+		if !test2 {
+			Database.InsertVolumn(Database.VolumnData{
+				JournalId,
+				VolumnNum,
+				VolumnEditor,
+				publishDate})
+			//某期刊是否空
+			var test3 bool
+			test3, err = Database.SearchPaper3(JournalId)
+			if !test3 {
+				Database.InsertJournal(Database.JournalData{
+					JournalId,
+					JournalTitle,
+					JournalEditor,
+					scope})
+			}
+		}
+
 		data := Database.PaperData{
 			PaperId,
 			PaperAuthor,
@@ -86,6 +106,18 @@ func AddPaper(c *gin.Context) {
 		isOpen := c.PostForm("isOpen")
 		ConferenceId := fmt.Sprintf("%x", sha256.Sum256([]byte(ConferenceTitle+ProceedingEditor+publishDate+publishAddress)))
 		PaperId := fmt.Sprintf("%x", sha256.Sum256([]byte(PaperAuthor+PaperTitle+publishDate)))
+
+		//检查相关论文是否存在
+		var test1 bool
+		test1, err = Database.SearchPaper1(ConferenceId)
+		if !test1 {
+			Database.InsertConference(Database.ConferenceData{
+				ConferenceId,
+				ConferenceTitle,
+				ProceedingEditor,
+				publishDate,
+				publishAddress})
+		}
 
 		data := Database.PaperData{
 			PaperId,

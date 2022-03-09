@@ -217,7 +217,6 @@ func SearchJournalPaper(PaperTitle string, PaperAuthor string, JournalTitle stri
 	return result, nil
 }
 
-//TODO: To complete
 func InsertPaper(data PaperData) error {
 	fmt.Println("Inserting a paepr...")
 	fmt.Println("PaperId: " + data.PaperId)
@@ -241,6 +240,17 @@ func InsertPaper(data PaperData) error {
 		return err
 	}
 	defer stmt.Close()
+
+	//针对相关Journal Volumn/Conference做处理
+
+	//检测某会议是否空
+	if data.ConferenceId != " " {
+
+	}
+	//检测期刊的某册是否空
+	if data.JournalId != " " && data.VolumnId != " " {
+
+	}
 
 	_, err = stmt.Exec(
 		data.PaperId,
