@@ -69,7 +69,7 @@ func Borrow(book Book, user User) error {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(BookInfo.ID, borrowingId, user.Username, user.Password, time.Now(), time.Now().Add(time.Hour*24*30))
+	_, err = stmt.Exec(BookInfo.ID, borrowingId, user.Username, user.Password, time.Now().String()[:10], time.Now().Add(time.Hour * 24 * 30).String()[:10])
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -98,6 +98,13 @@ func Return(book Book, user User) error {
 	//	return errors.New("have unreturned books, please return books first")
 	//}
 
+	var bid, cid, uname, upass, bdate, rdate string
+	row := db.QueryRow("SELECT * FROM Borrow WHERE bookid=$1 AND username=$2 AND userpassword=$3", book.ID, user.Username, user.Password)
+	err = row.Scan(&bid, &cid, &uname, &upass, &bdate, &rdate)
+	if err != nil {
+		return err
+	}
+
 	stmt, err := db.Prepare("DELETE FROM Borrow WHERE bookid=$1 AND username=$2 AND userpassword=$3")
 	if err != nil {
 		fmt.Println(err)
@@ -109,13 +116,19 @@ func Return(book Book, user User) error {
 		fmt.Println(err)
 		return err
 	}
-	// TODO: insert information into table BorrowHistory
+
+	stmt, err = db.Prepare("INSERT INTO Borrowhistory (bookid,copyid,username,userpassword,borrowdate,returndate) VALUES ($1,$2,$3,$4,$5,$6)")
+	_, err = stmt.Exec(bid, cid, uname, upass, bdate, time.Now().String()[:10])
+	if err != nil {
+		return err
+	}
+
 	fmt.Println("Return success")
 	return nil
 }
 
 func GetBorrowed(book Book) ([]Copy, error) {
-	fmt.Println("searching borrowed copy of book:", book.Title)
+	fmt.Println("searching borrowed copy of book:", book.ID)
 
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
@@ -147,7 +160,7 @@ func GetBorrowed(book Book) ([]Copy, error) {
 }
 
 func GetBorrowingBy(user User) ([]BorrowInfo, error) {
-	fmt.Println("Searching books borrowed by :", user.Username)
+	fmt.Println("Searching books borrowing by :", user.Username)
 
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
@@ -199,7 +212,6 @@ func GetBorrowedBy(user User) ([]BorrowInfo, error) {
 
 	rows, err := db.Query("SELECT * FROM Borrowhistory WHERE username= $1 AND userpassword=$2", user.Username, user.Password)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -213,7 +225,7 @@ func GetBorrowedBy(user User) ([]BorrowInfo, error) {
 			return nil, err
 		}
 		bookid, _ := strconv.Atoi(str1)
-		err := db.QueryRow("SELECT * FROM Book WHERE bookid=$1", bookid).Scan(nil, &str2, nil, &str3, nil, &str4, nil)
+		err := db.QueryRow("SELECT * FROM Book WHERE bookid=$1", bookid).Scan(&str1, &str2, &str1, &str3, &str1, &str4, &str1)
 		if err != nil {
 			return nil, err
 		}

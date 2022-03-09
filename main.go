@@ -9,6 +9,9 @@ import (
 )
 
 func main() {
+
+	gin.SetMode(gin.ReleaseMode)
+
 	router := gin.Default()
 
 	router.Use(middleware.Cors())
@@ -37,7 +40,7 @@ func main() {
 		c.IndentedJSON(http.StatusOK, "Test OK")
 	})
 
-	err := router.Run("localhost:8080")
+	err := router.Run(":8080")
 	if err != nil {
 		fmt.Println(err)
 		return

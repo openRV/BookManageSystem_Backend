@@ -14,7 +14,10 @@ type DelBookRet struct {
 
 func DeleteBook(c *gin.Context) {
 
-	bookId, _ := strconv.Atoi(c.Param("bookId"))
+	json := make(map[string]string)
+	c.BindJSON(&json)
+
+	bookId, _ := strconv.Atoi(json["bookId"])
 
 	claim, err := VertifyToken(c)
 	if err != nil {

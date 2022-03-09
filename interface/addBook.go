@@ -14,14 +14,20 @@ type AddBookRet struct {
 }
 
 func AddBook(c *gin.Context) {
-	title := c.PostForm("title")
-	author := c.PostForm("author")
-	num, _ := strconv.Atoi(c.PostForm("num"))
-	publisher := c.PostForm("publisher")
-	publicDate := c.PostForm("publicDate")
-	libName := c.PostForm("libName")
-	libLocation := c.PostForm("libLocation")
+
+	json := make(map[string]interface{})
+	c.BindJSON(&json)
+
+	title := json["title"].(string)
+	author := json["author"].(string)
+	num, _ := strconv.Atoi(json["num"].(string))
+	publisher := json["publisher"].(string)
+	publicDate := json["publicDate"].(string)
+	libName := json["libName"].(string)
+	libLocation := json["libLocation"].(string)
 	//checkout := c.PostForm("checkout") == "true"
+
+	publicDate = publicDate[:10]
 
 	claim, err := VertifyToken(c)
 	if err != nil {
@@ -48,12 +54,10 @@ func AddBook(c *gin.Context) {
 
 	idh := sha256.Sum256([]byte(title + author + publisher + publicDate + libName + libLocation))
 
-	var ids string
-
+	var id int
 	for _, value := range idh {
-		ids = ids + string(value)
+		id = id + int(value)
 	}
-	id, _ := strconv.Atoi(ids)
 	Database.AddBook(Database.Book{
 		ID:               id,
 		Title:            title,
@@ -61,7 +65,7 @@ func AddBook(c *gin.Context) {
 		Author:           author,
 		PublicationDate:  publicDate,
 		PublisherName:    publisher,
-		PublisherAddress: "",
+		PublisherAddress: "not provided",
 	})
 
 	for i := 1; i <= num; i++ {
@@ -73,5 +77,8 @@ func AddBook(c *gin.Context) {
 		})
 
 	}
+
+	c.IndentedJSON(http.StatusOK, AddBookRet{Success: true})
+	return
 
 }

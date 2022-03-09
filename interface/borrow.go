@@ -166,11 +166,17 @@ func Borrowed(c *gin.Context) {
 		})
 	}
 
-	var result []BorrowInfo
-	if curPage*10 > len(data) {
-		result = data[(curPage-1)*10:]
-	} else {
-		result = data[(curPage-1)*10 : curPage*10]
+	var revdata []BorrowInfo
+
+	for i := len(data) - 1; i >= 0; i-- {
+		revdata = append(revdata, data[i])
 	}
-	c.IndentedJSON(http.StatusOK, BorrowInfoRet{Success: true, Data: result, Total: len(data)})
+
+	var result []BorrowInfo
+	if curPage*10 > len(revdata) {
+		result = revdata[(curPage-1)*10:]
+	} else {
+		result = revdata[(curPage-1)*10 : curPage*10]
+	}
+	c.IndentedJSON(http.StatusOK, BorrowInfoRet{Success: true, Data: result, Total: len(revdata)})
 }
