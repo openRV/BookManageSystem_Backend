@@ -112,7 +112,7 @@ func DeleteVolumn(journalid string, volumnid string) error {
 	}
 	defer db.Close()
 
-	stmt, err := db.Prepare("DELETE FROM Journal WHERE journalid = $1 AND volumnid = $2")
+	stmt, err := db.Prepare("DELETE FROM Volumn WHERE journalid = $1 AND volumnid = $2")
 	if err != nil {
 		fmt.Println(err)
 		return err

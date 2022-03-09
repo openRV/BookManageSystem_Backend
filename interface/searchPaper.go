@@ -189,27 +189,27 @@ type OpenPaperRet struct {
 
 func GetOpenPaper(c *gin.Context) {
 	curPage, _ := strconv.Atoi(c.Query("curPage"))
-
+	fmt.Println("CurPage:", curPage)
 	if curPage < 1 {
 		curPage = 1
 	}
+	/*
+		claim, err := VertifyToken(c)
+		if err != nil {
+			c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+			fmt.Println(err)
+			return
+		}
 
-	claim, err := VertifyToken(c)
-	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
-		fmt.Println(err)
-		return
-	}
+		authName := claim.Name
+		authPass := claim.Password
 
-	authName := claim.Name
-	authPass := claim.Password
-
-	_, err = Database.GetUserProperty(Database.User{Username: authName, Password: authPass})
-	if err != nil {
-		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
-		fmt.Println(err)
-		return
-	}
+		_, err = Database.GetUserProperty(Database.User{Username: authName, Password: authPass})
+		if err != nil {
+			c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+			fmt.Println(err)
+			return
+		}*/
 
 	result, err := Database.GetOpenPaper()
 	if err != nil {

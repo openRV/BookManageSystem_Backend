@@ -25,7 +25,7 @@ func SearchConference1(conferenceId string) (string, error) {
 	defer db.Close()
 
 	var result string
-	err = db.QueryRow("SELECT publiahsdate FROM Conference WHERE conferenceid = $1", conferenceId).Scan(&result)
+	err = db.QueryRow("SELECT publishdate FROM Conference WHERE conferenceid = $1", conferenceId).Scan(&result)
 	if err != nil {
 		fmt.Println(err)
 		return "", err

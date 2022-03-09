@@ -13,7 +13,7 @@ type JournalData struct {
 	Scope        string `json:"scope"`
 }
 
-func SearchJournal(JournalTitle string, Scope string) ([][5]string, error) {
+func SearchJournal(JournalTitle string, Scope string) ([][4]string, error) {
 	fmt.Println("Getting Journals...")
 	fmt.Println("JournalTitle: " + JournalTitle)
 	fmt.Println("JournalCope: " + Scope)
@@ -31,16 +31,16 @@ func SearchJournal(JournalTitle string, Scope string) ([][5]string, error) {
 	}
 	defer rows.Close()
 
-	var result [][5]string
+	var result [][4]string
 
 	for rows.Next() {
-		var str1, str2, str3, str4, str5 string
-		err = rows.Scan(&str1, &str2, &str3, &str4, &str5)
+		var str1, str2, str3, str4 string
+		err = rows.Scan(&str1, &str2, &str3, &str4)
 		if err != nil {
 			return result, err
 		}
 		if strings.Contains(str2, JournalTitle) && strings.Contains(str4, Scope) {
-			result = append(result, [5]string{str1, str2, str3, str4, str5})
+			result = append(result, [4]string{str1, str2, str3, str4})
 		}
 	}
 

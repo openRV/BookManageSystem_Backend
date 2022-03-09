@@ -12,8 +12,12 @@ type DelPaperRet struct {
 }
 
 func DeletePaper(c *gin.Context) {
-	paperid := c.Param("paperId")
+	json := make(map[string]interface{})
+	c.BindJSON(&json)
 
+	paperid := json["paperId"].(string)
+
+	fmt.Println("PapperId From Web: " + paperid)
 	claim, err := VertifyToken(c)
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})

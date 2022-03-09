@@ -28,7 +28,7 @@ func GetOpenPaper() ([][5]string, error) {
 
 	for _, value := range temp {
 		if value[7] == "True" {
-			if value[5] != "" {
+			if value[5] != " " {
 				conferenceResult, err := SearchConference1(value[5])
 				if err != nil {
 					fmt.Println(err)
@@ -36,7 +36,7 @@ func GetOpenPaper() ([][5]string, error) {
 				}
 				result = append(result, [5]string{value[0], value[2], value[1], conferenceResult, value[6]})
 			}
-			if value[3] != "" && value[4] != "" {
+			if value[3] != " " && value[4] != " " {
 				volumnresult, err := SearchVolumn1(value[3], value[4])
 				if err != nil {
 					fmt.Println(err)
@@ -62,7 +62,7 @@ func SearchPaper1(Conferenceid string) (bool, error) {
 	defer db.Close()
 
 	var result string
-	err = db.QueryRow("SELECT papertitle FROM Conference WHERE conferenceid = $1", Conferenceid).Scan(&result)
+	err = db.QueryRow("SELECT papertitle FROM Paper WHERE conferenceid = $1", Conferenceid).Scan(&result)
 	if err != nil {
 		fmt.Println(err)
 		return false, err
@@ -81,7 +81,7 @@ func SearchPaper2(Journalid string, Volumnid string) (bool, error) {
 	defer db.Close()
 
 	var result string
-	err = db.QueryRow("SELECT papertitle FROM Conference WHERE journalid = $1 AND volumnid = $2", Journalid, Volumnid).Scan(&result)
+	err = db.QueryRow("SELECT papertitle FROM Paper WHERE journalid = $1 AND volumnid = $2", Journalid, Volumnid).Scan(&result)
 	if err != nil {
 		fmt.Println(err)
 		return false, err
@@ -101,7 +101,7 @@ func SearchPaper3(Journalid string) (bool, error) {
 	defer db.Close()
 
 	var result string
-	err = db.QueryRow("SELECT papertitle FROM Conference WHERE journalid = $1", Journalid).Scan(&result)
+	err = db.QueryRow("SELECT papertitle FROM Paper WHERE journalid = $1", Journalid).Scan(&result)
 	if err != nil {
 		fmt.Println(err)
 		return false, err
@@ -112,7 +112,8 @@ func SearchPaper3(Journalid string) (bool, error) {
 }
 
 func SearchPaper(PaperTitle string, PaperAuthor string) ([][8]string, error) {
-	fmt.Println("getting papers...")
+
+	fmt.Println("getting some papers...")
 	fmt.Println("PaperTitle: " + PaperTitle)
 	fmt.Println("PaperAuthor: " + PaperAuthor)
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
@@ -258,12 +259,20 @@ func InsertPaper(data PaperData) error {
 func DeletePaper(PaperId string) error {
 	fmt.Println("Deleting a paper...")
 	fmt.Println("PaperId: " + PaperId)
+
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 	defer db.Close()
+
+	var result = &PaperData{}
+	err = db.QueryRow("SELECT * FROM Paper WHERE paperid = $1", PaperId).Scan(&result.PaperId, &result.Author, &result.PaperTitle, &result.JournalId, &result.VolumnId, &result.ConferenceId, &result.Link, &result.IsOpen)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
 
 	stmt, err := db.Prepare("DELETE FROM Paper WHERE paperid = $1")
 	if err != nil {
@@ -278,14 +287,8 @@ func DeletePaper(PaperId string) error {
 	}
 	//针对相关Journal Volumn/Conference做处理
 
-	var result = &PaperData{}
-	err = db.QueryRow("SELECT * FROM Paper WHERE paperid = $1", PaperId).Scan(&result.PaperId, &result.PaperTitle, &result.JournalId, &result.VolumnId, &result.ConferenceId, &result.Link)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
 	//检测某会议是否空
-	if result.ConferenceId != "" {
+	if result.ConferenceId != " " {
 		var test1 bool
 		test1, err = SearchPaper1(result.ConferenceId)
 		if !test1 {
@@ -293,7 +296,7 @@ func DeletePaper(PaperId string) error {
 		}
 	}
 	//检测期刊的某册是否空
-	if result.JournalId != "" && result.VolumnId != "" {
+	if result.JournalId != " " && result.VolumnId != " " {
 		var test2 bool
 		test2, err = SearchPaper2(result.JournalId, result.VolumnId)
 		if !test2 {
