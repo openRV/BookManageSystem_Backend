@@ -90,14 +90,13 @@ func HandleDownloadFile(c *gin.Context) {
 		return
 	}
 
-	info := DownloadInfo{
+	info := Database.DownloadInfo{
 		Username:     authName,
 		Userpassword: authPass,
 		Paperid:      paperid,
-		PaperTitle:   result[0][2],
+		Papertitle:   result[0][2],
 		Paperauthor:  result[0][1],
-		Downloaddate: time.Now()}
-
+		Downloaddate: time.Now().Format("2006-01-02 15:04:05")}
 	err = Database.InsertDownload(info)
 	if err != nil {
 		fmt.Println(err)
