@@ -80,7 +80,7 @@ func InsertVolumn(data VolumnData) error {
 	}
 	defer db.Close()
 
-	stmt, err := db.Prepare("INSERT INTO Volumn (journalid,wolumnid,wolumneditor,publicationdate) VALUES ($1,$2,$3,$4)")
+	stmt, err := db.Prepare("INSERT INTO Volumn (journalid,volumnid,volumneditor,publicationdate) VALUES ($1,$2,$3,$4)")
 	if err != nil {
 		fmt.Println(err)
 		return err

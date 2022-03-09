@@ -64,13 +64,13 @@ func AddPaper(c *gin.Context) {
 		PaperId := PaperId1[0:3]
 
 		var test2 bool
-		test2, _ = Database.SearchPaper2(JournalId, VolumnNum)
+		test2, _ = Database.SearchPaper3(JournalId)
 		if !test2 {
-			err = Database.InsertVolumn(Database.VolumnData{
+			err = Database.InsertJournal(Database.JournalData{
 				JournalId,
-				VolumnNum,
-				VolumnEditor,
-				publishDate})
+				JournalTitle,
+				JournalEditor,
+				scope})
 			if err != nil {
 				c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 				fmt.Println(err)
@@ -78,13 +78,13 @@ func AddPaper(c *gin.Context) {
 			}
 			//某期刊是否空
 			var test3 bool
-			test3, _ = Database.SearchPaper3(JournalId)
+			test3, _ = Database.SearchPaper2(JournalId, VolumnNum)
 			if !test3 {
-				err = Database.InsertJournal(Database.JournalData{
+				err = Database.InsertVolumn(Database.VolumnData{
 					JournalId,
-					JournalTitle,
-					JournalEditor,
-					scope})
+					VolumnNum,
+					VolumnEditor,
+					publishDate})
 				if err != nil {
 					c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 					fmt.Println(err)

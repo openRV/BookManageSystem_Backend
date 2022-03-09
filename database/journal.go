@@ -62,7 +62,7 @@ func InsertJournal(data JournalData) error {
 	}
 	defer db.Close()
 
-	stmt, err := db.Prepare("INSERT INTO Journal (journalid,journalititle,author,scope) VALUES ($1,$2,$3,$4)")
+	stmt, err := db.Prepare("INSERT INTO Journal (journalid,journaltitle,author,scope) VALUES ($1,$2,$3,$4)")
 	if err != nil {
 		fmt.Println(err)
 		return err

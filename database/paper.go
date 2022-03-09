@@ -27,7 +27,7 @@ func GetOpenPaper() ([][5]string, error) {
 	}
 
 	for _, value := range temp {
-		if value[7] == "True" {
+		if value[7] == "true" {
 			if value[5] != " " {
 				conferenceResult, err := SearchConference1(value[5])
 				if err != nil {
@@ -84,7 +84,7 @@ func SearchPaper2(Journalid string, Volumnid string) (bool, error) {
 	defer db.Close()
 
 	var result string
-	_ = db.QueryRow("SELECT papertitle FROM Paper WHERE journalid = $1 AND volumnid = $2", Journalid, Volumnid).Scan(&result)
+	err = db.QueryRow("SELECT papertitle FROM Paper WHERE journalid = $1 AND volumnid = $2", Journalid, Volumnid).Scan(&result)
 	if err != nil {
 		fmt.Println(err)
 		return false, err
@@ -104,7 +104,7 @@ func SearchPaper3(Journalid string) (bool, error) {
 	defer db.Close()
 
 	var result string
-	_ = db.QueryRow("SELECT papertitle FROM Paper WHERE journalid = $1", Journalid).Scan(&result)
+	err = db.QueryRow("SELECT papertitle FROM Paper WHERE journalid = $1", Journalid).Scan(&result)
 	if err != nil {
 		fmt.Println(err)
 		return false, err
