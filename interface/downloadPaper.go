@@ -82,8 +82,7 @@ func HandleDownloadFile(c *gin.Context) {
 
 	authName := claim.Name
 	authPass := claim.Password
-
-	result, err := Database.SearchPaper(paperid, "")
+	result, err := Database.SearchPaper4(paperid)
 	if err != nil {
 		fmt.Println(err)
 		return

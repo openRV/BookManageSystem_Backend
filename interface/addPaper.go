@@ -58,16 +58,13 @@ func AddPaper(c *gin.Context) {
 		VolumnNum := c.PostForm("VolumeNum")
 		VolumnEditor := c.PostForm("VolumeEditor")
 		isOpen := c.PostForm("isOpen")
-		JournalId := fmt.Sprintf("%x", sha256.Sum256([]byte(JournalTitle+JournalEditor+scope)))
-		PaperId := fmt.Sprintf("%x", sha256.Sum256([]byte(PaperAuthor+PaperTitle+publishDate+VolumnNum+VolumnEditor)))
+		JournalId1 := fmt.Sprintf("%x", sha256.Sum256([]byte(JournalTitle+JournalEditor+scope)))
+		JournalId := JournalId1[0:3]
+		PaperId1 := fmt.Sprintf("%x", sha256.Sum256([]byte(PaperAuthor+PaperTitle+publishDate+VolumnNum+VolumnEditor)))
+		PaperId := PaperId1[0:3]
 
 		var test2 bool
-		test2, err = Database.SearchPaper2(JournalId, VolumnNum)
-		if err != nil {
-			c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
-			fmt.Println(err)
-			return
-		}
+		test2, _ = Database.SearchPaper2(JournalId, VolumnNum)
 		if !test2 {
 			err = Database.InsertVolumn(Database.VolumnData{
 				JournalId,
@@ -81,12 +78,7 @@ func AddPaper(c *gin.Context) {
 			}
 			//某期刊是否空
 			var test3 bool
-			test3, err = Database.SearchPaper3(JournalId)
-			if err != nil {
-				c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
-				fmt.Println(err)
-				return
-			}
+			test3, _ = Database.SearchPaper3(JournalId)
 			if !test3 {
 				err = Database.InsertJournal(Database.JournalData{
 					JournalId,
@@ -119,24 +111,21 @@ func AddPaper(c *gin.Context) {
 	} else {
 		PaperTitle := c.PostForm("title")
 		PaperAuthor := c.PostForm("author")
-		publishDate := c.PostForm("publicationDate")
+		publishDate := c.PostForm("publicDate")
 		publishAddress := c.PostForm("publicAddress")
 		ConferenceTitle := c.PostForm("ConferenceTitle")
 		ProceedingEditor := c.PostForm("ProceedingEditor")
 		isOpen := c.PostForm("isOpen")
-		ConferenceId := fmt.Sprintf("%x", sha256.Sum256([]byte(ConferenceTitle+ProceedingEditor+publishDate+publishAddress)))
-		PaperId := fmt.Sprintf("%x", sha256.Sum256([]byte(PaperAuthor+PaperTitle+publishDate)))
+		ConferenceId1 := fmt.Sprintf("%x", sha256.Sum256([]byte(ConferenceTitle+ProceedingEditor+publishDate+publishAddress)))
+		ConferenceId := ConferenceId1[0:3]
+		PaperId1 := fmt.Sprintf("%x", sha256.Sum256([]byte(PaperAuthor+PaperTitle+publishDate)))
+		PaperId := PaperId1[0:3]
 
 		//检查相关论文是否存在
 		var test1 bool
 		test1, err = Database.SearchPaper1(ConferenceId)
-		if err != nil {
-			c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
-			fmt.Println(err)
-			return
-		}
 		if !test1 {
-			Database.InsertConference(Database.ConferenceData{
+			err = Database.InsertConference(Database.ConferenceData{
 				ConferenceId,
 				ConferenceTitle,
 				ProceedingEditor,
@@ -147,6 +136,7 @@ func AddPaper(c *gin.Context) {
 				fmt.Println(err)
 				return
 			}
+
 		}
 
 		data := Database.PaperData{

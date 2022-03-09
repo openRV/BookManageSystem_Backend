@@ -54,6 +54,7 @@ func GetOpenPaper() ([][5]string, error) {
 
 func SearchPaper1(Conferenceid string) (bool, error) {
 	fmt.Println("Verify whether are more papers in the same Conference...")
+	fmt.Println("ConferenceId: " + Conferenceid)
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -73,6 +74,8 @@ func SearchPaper1(Conferenceid string) (bool, error) {
 
 func SearchPaper2(Journalid string, Volumnid string) (bool, error) {
 	fmt.Println("Examing whether there are more papers in the same JournalColumn...")
+	fmt.Println("Journalid: " + Journalid)
+	fmt.Println("Volumnid: " + Volumnid)
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -81,18 +84,18 @@ func SearchPaper2(Journalid string, Volumnid string) (bool, error) {
 	defer db.Close()
 
 	var result string
-	err = db.QueryRow("SELECT papertitle FROM Paper WHERE journalid = $1 AND volumnid = $2", Journalid, Volumnid).Scan(&result)
+	_ = db.QueryRow("SELECT papertitle FROM Paper WHERE journalid = $1 AND volumnid = $2", Journalid, Volumnid).Scan(&result)
 	if err != nil {
 		fmt.Println(err)
 		return false, err
 	}
-
 	return true, nil
 
 }
 
 func SearchPaper3(Journalid string) (bool, error) {
 	fmt.Println("Examing whether there are more papers in the same Journal...")
+	fmt.Println("Journalid" + Journalid)
 	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
 	if err != nil {
 		fmt.Println(err)
@@ -101,14 +104,49 @@ func SearchPaper3(Journalid string) (bool, error) {
 	defer db.Close()
 
 	var result string
-	err = db.QueryRow("SELECT papertitle FROM Paper WHERE journalid = $1", Journalid).Scan(&result)
+	_ = db.QueryRow("SELECT papertitle FROM Paper WHERE journalid = $1", Journalid).Scan(&result)
 	if err != nil {
 		fmt.Println(err)
 		return false, err
 	}
-
 	return true, nil
 
+}
+
+func SearchPaper4(PaperId string) ([][8]string, error) {
+
+	fmt.Println("getting papers in term of paperid...")
+	fmt.Println("PaperId: " + PaperId)
+
+	db, err := sql.Open(DBTYPE, DBTYPE+"://"+USERNAME+":"+PASSWORD+"@"+HOST+":"+PORT+"/"+DBNAME+"?sslmode="+SSLMODE)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer db.Close()
+
+	//paper id, author, paper title, journal id, column id, conference id, link, is open
+	rows, err := db.Query("SELECT * FROM Paper WHERE paperid = " + PaperId)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var result [][8]string
+
+	for rows.Next() {
+		var str1, str2, str3, str4, str5, str6, str7, str8 string
+		err = rows.Scan(&str1, &str2, &str3, &str4, &str5, &str6, &str7, &str8)
+		if err != nil {
+			return result, err
+		}
+		result = append(result, [8]string{str1, str2, str3, str4, str5, str6, str7, str8})
+
+	}
+
+	fmt.Println("Successfully get paper!")
+	return result, nil
 }
 
 func SearchPaper(PaperTitle string, PaperAuthor string) ([][8]string, error) {
@@ -305,11 +343,8 @@ func DeletePaper(PaperId string) error {
 	//检测某会议是否空
 	if result.ConferenceId != " " {
 		var test1 bool
-		test1, err = SearchPaper1(result.ConferenceId)
-		if err != nil {
-			fmt.Println(err)
-			return err
-		}
+		test1, _ = SearchPaper1(result.ConferenceId)
+
 		if !test1 {
 			DeleteConference(result.ConferenceId)
 		}
@@ -317,20 +352,14 @@ func DeletePaper(PaperId string) error {
 	//检测期刊的某册是否空
 	if result.JournalId != " " && result.VolumnId != " " {
 		var test2 bool
-		test2, err = SearchPaper2(result.JournalId, result.VolumnId)
-		if err != nil {
-			fmt.Println(err)
-			return err
-		}
+		test2, _ = SearchPaper2(result.JournalId, result.VolumnId)
+
 		if !test2 {
 			DeleteVolumn(result.JournalId, result.VolumnId)
 			//某期刊是否空
 			var test3 bool
-			test3, err = SearchPaper3(result.JournalId)
-			if err != nil {
-				fmt.Println(err)
-				return err
-			}
+			test3, _ = SearchPaper3(result.JournalId)
+
 			if !test3 {
 				DeleteJournal(result.JournalId)
 			}
