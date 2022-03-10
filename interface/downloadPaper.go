@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -85,6 +84,7 @@ func HandleDownloadFile(c *gin.Context) {
 	authPass := claim.Password
 	result, err := Database.SearchPaper4(paperid)
 	if err != nil {
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		fmt.Println(err)
 		return
 	}
@@ -98,21 +98,35 @@ func HandleDownloadFile(c *gin.Context) {
 		Downloaddate: time.Now().Format("2006-01-02 15:04:05")}
 	err = Database.InsertDownload(info)
 	if err != nil {
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		fmt.Println(err)
 		return
 	}
-	//get file
-	file, err := os.Open(result[0][6])
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
 
-	content, err := ioutil.ReadAll(file)
+	fmt.Println(result[0][6])
 
-	c.Writer.WriteHeader(http.StatusOK)
-	c.Header("Content-Disposition", "attachment; filename="+result[0][2]+".pdf")
-	c.Header("Content-Type", "application/pdf")
-	c.Header("Accept-Length", fmt.Sprintf("%d", len(content)))
-	c.Writer.Write([]byte(content))
+	c.File(result[0][6])
+	/*
+		//get file
+		file, err := os.Open(result[0][6])
+		if err != nil {
+			c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+			fmt.Println(err)
+			return
+		}
+		defer file.Close()
+
+		content, err := ioutil.ReadAll(file)
+		if err != nil {
+			c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+			fmt.Println(err)
+			return
+		}
+
+
+		c.Writer.WriteHeader(http.StatusOK)
+		c.Header("Content-Disposition", "attachment; filename="+result[0][2]+".pdf")
+		c.Header("Content-Type", "application/pdf")
+		c.Header("Accept-Length", fmt.Sprintf("%d", len(content)))
+		c.Writer.Write([]byte(content))*/
 }

@@ -224,7 +224,7 @@ func GetOpenPaper(c *gin.Context) {
 		file_slice := strings.Split(value[4], "\\")
 		file_name := file_slice[len(file_slice)-1]
 		ip := "10.128.132.11"
-		downloadLink := "http://" + ip + ":8080/static" + file_name
+		downloadLink := "http://" + ip + ":8080/static/" + file_name
 		paperData := OpenPaperInfo{
 			PaperId:     value[0],
 			PaperTitle:  value[1],
