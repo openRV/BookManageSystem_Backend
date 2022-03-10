@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -220,12 +221,16 @@ func GetOpenPaper(c *gin.Context) {
 
 	data := []OpenPaperInfo{}
 	for _, value := range result {
+		file_slice := strings.Split(value[4], "\\")
+		file_name := file_slice[len(file_slice)-1]
+		ip := "10.128.132.11"
+		downloadLink := "http://" + ip + ":8080/static" + file_name
 		paperData := OpenPaperInfo{
 			PaperId:     value[0],
 			PaperTitle:  value[1],
 			PaperAuthor: value[2],
 			PublishDate: value[3],
-			Link:        value[4],
+			Link:        downloadLink,
 		}
 		data = append(data, paperData)
 	}

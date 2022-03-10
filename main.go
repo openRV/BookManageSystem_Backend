@@ -40,6 +40,7 @@ func main() {
 	router.GET("/users/downloadPaper", Interface.HandleDownloadFile)
 
 	router.POST("/faculty/addPapers", Interface.AddPaper)
+	router.StaticFS("/static", http.Dir("./static"))
 
 	router.GET("/test", func(c *gin.Context) {
 		c.IndentedJSON(http.StatusOK, "Test OK")

@@ -3,13 +3,15 @@ package Interface
 import (
 	Database "bookms/Database"
 	"crypto/sha256"
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"net"
 	"net/http"
 )
 
 type AddPaperRet struct {
-	Success bool `json:success`
+	Success bool `json:"success"`
 }
 
 func AddPaper(c *gin.Context) {
@@ -21,8 +23,18 @@ func AddPaper(c *gin.Context) {
 		return
 	}
 	//文件保存
-	file_path := "D:\\Doc\\" + file.Filename // 设置保存文件的路径，不要忘了后面的文件名
-	c.SaveUploadedFile(file, file_path)      // 保存文件
+	file_path := "D:\\ForCourse\\DatabaseSystem\\BookManageSystem_Backend\\static\\" + file.Filename
+
+	/*ip, err := getClientIp()
+	if err != nil {
+		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
+		fmt.Println(err)
+		return
+	}*/
+	//ip := "10.128.132.11:8080"
+
+	//Link := "http://" + ip + "/static/" + file.Filename
+	c.SaveUploadedFile(file, file_path)
 
 	//权限认证
 	claim, err := VertifyToken(c)
@@ -155,5 +167,25 @@ func AddPaper(c *gin.Context) {
 			return
 		}
 	}
+	fmt.Println("Reuuuuuuuuuuurn")
 	c.IndentedJSON(http.StatusOK, AddPaperRet{Success: true})
+}
+
+func getClientIp() (string, error) {
+	addrs, err := net.InterfaceAddrs()
+
+	if err != nil {
+		return "", err
+	}
+
+	for _, address := range addrs {
+		// 检查ip地址判断是否回环地址
+		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil {
+				return ipnet.IP.String(), nil
+			}
+		}
+	}
+
+	return "", errors.New("Can not find the client ip address!")
 }

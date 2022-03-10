@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -87,7 +88,7 @@ func HandleDownloadFile(c *gin.Context) {
 		fmt.Println(err)
 		return
 	}
-
+	//Insert download history
 	info := Database.DownloadInfo{
 		Username:     authName,
 		Userpassword: authPass,
@@ -100,8 +101,14 @@ func HandleDownloadFile(c *gin.Context) {
 		fmt.Println(err)
 		return
 	}
+	//get file
+	file, err := os.Open(result[0][6])
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
 
-	content := []byte(result[0][6])
+	content, err := ioutil.ReadAll(file)
 
 	c.Writer.WriteHeader(http.StatusOK)
 	c.Header("Content-Disposition", "attachment; filename="+result[0][2]+".pdf")
