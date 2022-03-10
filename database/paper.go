@@ -125,8 +125,9 @@ func SearchPaper4(PaperId string) ([][8]string, error) {
 	}
 	defer db.Close()
 
-	//paper id, author, paper title, journal id, column id, conference id, link, is open
-	rows, err := db.Query("SELECT * FROM Paper WHERE paperid = " + PaperId)
+	//paper id, author, paper title, journal id, column id, conference id, link, is openfmt.
+	stmt := fmt.Sprintf("SELECT * FROM Paper WHERE paperid = '%v'", PaperId)
+	rows, err := db.Query(stmt)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err

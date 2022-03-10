@@ -14,15 +14,15 @@ type AddPaperRet struct {
 
 func AddPaper(c *gin.Context) {
 	//文件读取
-	read, err := c.FormFile("file")
-	reader, _ := read.Open()
-	file := make([]byte, 25)
-	_, err = reader.Read(file)
+	file, err := c.FormFile("file")
 	if err != nil {
 		c.IndentedJSON(http.StatusOK, ErrorRes{Success: false, Msg: err.Error()})
 		fmt.Println(err)
 		return
 	}
+	//文件保存
+	file_path := "D:\\Doc\\" + file.Filename // 设置保存文件的路径，不要忘了后面的文件名
+	c.SaveUploadedFile(file, file_path)      // 保存文件
 
 	//权限认证
 	claim, err := VertifyToken(c)
@@ -100,7 +100,7 @@ func AddPaper(c *gin.Context) {
 			JournalId,
 			VolumnNum,
 			" ",
-			string(file),
+			file_path,
 			isOpen}
 		err := Database.InsertPaper(data)
 		if err != nil {
@@ -146,7 +146,7 @@ func AddPaper(c *gin.Context) {
 			" ",
 			" ",
 			ConferenceId,
-			string(file),
+			file_path,
 			isOpen}
 		err := Database.InsertPaper(data)
 		if err != nil {
